@@ -5,52 +5,63 @@
 <title>Ochtendcoach</title>
 
 <style>
-body {font-family: -apple-system; padding:20px; background:#f3f4f6;}
-input,select,button {width:100%; padding:16px; margin-top:10px; font-size:20px; border-radius:10px;}
-button {background:black; color:white;}
-#result {margin-top:20px; background:white; padding:15px; border-radius:10px;}
+body {font-family: -apple-system; padding:20px;}
+input, select, button {width:100%; padding:15px; margin:10px 0; font-size:18px;}
+button {background:black; color:white; border-radius:10px;}
+#result {margin-top:20px; padding:15px; border-radius:10px; font-size:18px;}
 </style>
 </head>
 
 <body>
 
-<h1>Ochtendcoach</h1>
+<h2>Ochtendcoach 🔥</h2>
 
-<input id="bb" placeholder="Body Battery">
-<input id="sl" placeholder="Slaapscore">
+<input id="bb" placeholder="Body Battery (vb 75)">
+<input id="sleep" placeholder="Slaapscore (vb 80)">
 
-<select id="f">
-<option>Goed</option>
-<option>Matig</option>
-<option>Slecht</option>
+<select id="gevoel">
+  <option value="goed">Goed</option>
+  <option value="matig">Matig</option>
+  <option value="slecht">Slecht</option>
 </select>
 
-<button onclick="go()">Wat vandaag?</button>
+<button onclick="advies()">Wat vandaag?</button>
 
 <div id="result"></div>
 
 <script>
-function go() {
-let bb = parseInt(document.getElementById("bb").value);
-let sl = parseInt(document.getElementById("sl").value);
-let f = document.getElementById("f").value;
+function advies(){
+  let bb = parseInt(document.getElementById("bb").value);
+  let sleep = parseInt(document.getElementById("sleep").value);
+  let gevoel = document.getElementById("gevoel").value;
 
-let advies = "";
+  let advies = "";
+  let kleur = "";
 
-if (isNaN(bb) || isNaN(sl)) {
-advies = "Vul alles in.";
-}
-else if (bb < 40 || sl < 60 || f === "Slecht") {
-advies = "Rustdag: wandelen + yoga.";
-}
-else if (bb < 70 || sl < 75 || f === "Matig") {
-advies = "Lichte training.";
-}
-else {
-advies = "Goede training 💪";
-}
+  if(bb >= 80 && sleep >= 80){
+    advies = "🔥 TOPDAG → HASfit + vetverbranding";
+    kleur = "#c8f7c5";
+  }
+  else if(bb >= 60){
+    advies = "🚶 Zone 2 wandeling → vetverbranding";
+    kleur = "#e7f7c5";
+  }
+  else if(bb >= 40){
+    advies = "🧘 Yoga + lichte beweging";
+    kleur = "#fff3cd";
+  }
+  else{
+    advies = "🛌 Rustdag → herstel = progressie";
+    kleur = "#f8d7da";
+  }
 
-document.getElementById("result").innerText = advies;
+  if(gevoel === "slecht"){
+    advies = "⚠️ Luister naar je lichaam → rust of zeer licht";
+    kleur = "#f8d7da";
+  }
+
+  document.getElementById("result").innerHTML = advies;
+  document.getElementById("result").style.background = kleur;
 }
 </script>
 
