@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Weekcoach PRO+</title>
+  <title>Weekcoach V2 Intelligent</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -172,8 +172,8 @@
 </head>
 <body>
   <div class="app">
-    <h1>Weekcoach PRO+ 🔥</h1>
-    <p class="sub">Persoonlijke coach voor vetverbranding, herstel, weekbelasting en morgenadvies.</p>
+    <h1>Weekcoach V2 🔥</h1>
+    <p class="sub">Intelligente coach voor vetverbranding, herstel, weektrend en morgenadvies.</p>
 
     <div class="panel">
       <input id="bb" type="number" inputmode="numeric" placeholder="Body Battery (bv 75)">
@@ -217,7 +217,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "weekcoach_pro_plus";
+    const STORAGE_KEY = "weekcoach_v2_intelligent";
 
     function average(arr) {
       if (!arr.length) return 0;
@@ -231,11 +231,11 @@
       return Math.sqrt(variance);
     }
 
-    function monotony(arr) {
-      if (arr.length < 3) return 0;
+    function calcMonotony(arr) {
+      if (arr.length < 3) return null;
       const avg = average(arr);
       const sd = stddev(arr);
-      if (sd === 0) return avg > 0 ? 3.0 : 0;
+      if (sd === 0) return null;
       return avg / sd;
     }
 
@@ -296,38 +296,79 @@
       return score;
     }
 
-    function tomorrowForecast(todayScore, avgLoad, mono, kleurVandaag) {
-      if (todayScore >= 9 && avgLoad >= 6) {
+    function buildWeekAssessment(loads) {
+      const days = loads.length;
+      const avg = average(loads);
+      const mono = calcMonotony(loads);
+
+      let status = "";
+      let coachText = "";
+
+      if (days <= 2) {
+        status = "Opbouwfase";
+        coachText = "Nog te weinig weekdata om een echte trend te beoordelen. Blijf gecontroleerd.";
+      } else if (mono !== null && mono > 2.0) {
+        status = "Te eenvormig patroon";
+        coachText = "Je belasting lijkt te weinig gevarieerd. Dat verhoogt het risico op overbelasting.";
+      } else if (avg >= 6.5) {
+        status = "Sterk maar controle houden";
+        coachText = "Je week ligt hoog. Trainen kan, maar stapelen van zware dagen is niet slim.";
+      } else if (avg >= 4.5) {
+        status = "Gebalanceerd";
+        coachText = "Je weekbelasting oogt bruikbaar en redelijk gespreid.";
+      } else {
+        status = "Licht";
+        coachText = "Je weekbelasting is voorlopig eerder licht.";
+      }
+
+      return {
+        days,
+        avg,
+        mono,
+        status,
+        coachText
+      };
+    }
+
+    function tomorrowForecast(todayScore, todayColor, weekInfo) {
+      if (todayColor === "red") {
         return {
-          title: "🔮 Morgen: waarschijnlijk lichter",
+          title: "🔮 Morgenintentie: mogelijk rebound",
+          text: "Als je vandaag echt rustig houdt, is morgen mogelijk opnieuw een bruikbare dag."
+        };
+      }
+
+      if (weekInfo.status === "Te eenvormig patroon") {
+        return {
+          title: "🔮 Morgenintentie: licht of herstel",
+          text: "Je weekpatroon is te eenvormig. Morgen best ook gecontroleerd blijven."
+        };
+      }
+
+      if (todayScore >= 9) {
+        return {
+          title: "🔮 Morgenintentie: waarschijnlijk lichter",
           text: "Vandaag is stevig. Morgen is best een vetverbrandingsdag light of een hersteldag."
         };
       }
 
-      if (kleurVandaag === "red") {
+      if (todayScore >= 7) {
         return {
-          title: "🔮 Morgen: kans op rebound",
-          text: "Als je vandaag echt rustig houdt, stijgt de kans op een betere dag morgen."
+          title: "🔮 Morgenintentie: opnieuw trainbaar",
+          text: "Morgen is waarschijnlijk opnieuw bruikbaar, zolang je vandaag niet uitbreidt."
         };
       }
 
-      if (kleurVandaag === "orange") {
+      if (todayScore >= 5) {
         return {
-          title: "🔮 Morgen: mogelijk beter trainbaar",
-          text: "Als je vandaag niet uitbreidt, kan morgen vlotter en productiever aanvoelen."
-        };
-      }
-
-      if (kleurVandaag === "yellow") {
-        return {
-          title: "🔮 Morgen: opnieuw bruikbaar",
-          text: "Waarschijnlijk opnieuw een trainbare dag, tenzij je slaap of herstel tegenvalt."
+          title: "🔮 Morgenintentie: check herstel",
+          text: "Morgen hangt sterk af van slaap en herstel van vannacht."
         };
       }
 
       return {
-        title: "🔮 Morgen: check opnieuw",
-        text: "Sterke dag vandaag. Morgen kan ook goed zijn, maar alleen als je vandaag beheerst blijft."
+        title: "🔮 Morgenintentie: rustig starten",
+        text: "Na een lichte of zwakke dag kan morgen beter aanvoelen, maar check opnieuw."
       };
     }
 
@@ -353,14 +394,12 @@
 
       const score = calculateScore(bb, sleep, gevoel, lichaam);
 
-      const huidigeWeek = getWeekData();
-      const vorigeLoads = huidigeWeek.map(x => x.load);
-      const avgBefore = average(vorigeLoads);
-      const monoBefore = monotony(vorigeLoads);
+      const beforeWeek = getWeekData();
+      const beforeLoads = beforeWeek.map(x => x.load);
+      const beforeAssessment = buildWeekAssessment(beforeLoads);
 
       let titel = "";
       let dagBesluit = "";
-      let weekBesluit = "";
       let advies = "";
       let duur = "";
       let stappen = "";
@@ -371,7 +410,6 @@
       if (gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55 || score <= 4) {
         titel = "🔴 HERSTEL VERPLICHT";
         dagBesluit = "Vandaag geen training.";
-        weekBesluit = "Je lichaam krijgt voorrang.";
         advies = weer === "regen"
           ? "Zachte yoga of heel rustige korte gewone wandeling. Geen strand."
           : "Rustige wandeling of zachte yoga.";
@@ -382,38 +420,35 @@
         kleur = "red";
       }
 
-      else if (vorigeLoads.length >= 4 && avgBefore > 6.2) {
+      else if (beforeAssessment.days >= 4 && beforeAssessment.avg >= 6.8) {
         titel = "🔴 WEEKREM";
         dagBesluit = "Vandaag bewust afremmen.";
-        weekBesluit = "Je weekbelasting zit te hoog.";
         advies = weer === "regen"
           ? "Korte rustige gewone wandeling of yoga. Geen strand."
           : "Korte rustige wandeling of yoga.";
         duur = "20–30 min.";
         stappen = "6500–7500";
         hartslag = "Laag en rustig.";
-        waarschuwing = "Vandaag herstel, ook als je je goed voelt.";
+        waarschuwing = "Je weekbelasting is te hoog om nog door te duwen.";
         kleur = "red";
       }
 
-      else if (vorigeLoads.length >= 5 && monoBefore > 2.0) {
+      else if (beforeAssessment.days >= 5 && beforeAssessment.mono !== null && beforeAssessment.mono > 2.0) {
         titel = "🟠 AFREMDAG";
         dagBesluit = "Vandaag lichter houden.";
-        weekBesluit = "Je weekpatroon wordt te eenvormig.";
         advies = weer === "regen"
           ? "Gewone rustige wandeling. Geen strandwandeling."
           : "Rustige zone 2-wandeling zonder extra tempo.";
         duur = possible === "evening" ? "25–30 min." : "30–40 min.";
         stappen = "7500–8500";
         hartslag = "95–102 bpm.";
-        waarschuwing = "Simpel houden. Geen krachttraining.";
+        waarschuwing = "Te weinig variatie deze week. Geen krachttraining vandaag.";
         kleur = "orange";
       }
 
       else if (score <= 6) {
         titel = "🟠 LICHTE DAG";
         dagBesluit = "Vandaag bewegen, niet pushen.";
-        weekBesluit = "Week onder controle.";
         advies = weer === "regen"
           ? "Gewone rustige wandeling of binnenwandeling."
           : "Rustige wandeling in lage zone 2.";
@@ -427,7 +462,6 @@
       else if (score <= 8) {
         titel = "🟡 VETVERBRANDING";
         dagBesluit = "Vandaag is wandelen de beste keuze.";
-        weekBesluit = "Goede dag om volume te maken zonder overbelasting.";
         advies = weer === "regen"
           ? "Stevige gewone wandeling. Geen strand."
           : "Stevige strandwandeling in zone 2.";
@@ -441,7 +475,6 @@
       else {
         titel = "🟢 STERKE DAG";
         dagBesluit = "Vandaag kan je combineren, maar beheerst.";
-        weekBesluit = "Je dagscore laat meer toe, zolang je kort blijft in kracht.";
         advies = weer === "regen"
           ? "Gewone stevige wandeling + eventueel korte HASfit."
           : "Strandwandeling met tempo + eventueel korte HASfit.";
@@ -452,12 +485,12 @@
         kleur = "green";
       }
 
-      const nieuweWeek = saveTodayLoad(score);
-      const newLoads = nieuweWeek.map(x => x.load);
-      const avgAfter = average(newLoads);
-      const monoAfter = monotony(newLoads);
+      const updatedWeek = saveTodayLoad(score);
+      const updatedLoads = updatedWeek.map(x => x.load);
+      const weekInfo = buildWeekAssessment(updatedLoads);
+      const forecast = tomorrowForecast(score, kleur, weekInfo);
 
-      const forecast = tomorrowForecast(score, avgAfter, monoAfter, kleur);
+      const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
 
       result.classList.add(kleur);
       result.innerHTML = `
@@ -465,12 +498,14 @@
         <div class="box">Trainingsscore vandaag: ${score}/10</div>
         <div class="box">Stappendoel: ${stappen} stappen</div>
         <div class="line"><strong>Dagbesluit:</strong> ${dagBesluit}</div>
-        <div class="line"><strong>Weekcoach:</strong> ${weekBesluit}</div>
         <div class="line"><strong>Vandaag:</strong> ${advies}</div>
         <div class="line"><strong>Duur:</strong> ${duur}</div>
         <div class="line"><strong>Hartslag:</strong> ${hartslag}</div>
         <div class="line"><strong>Possible:</strong> ${timingText(possible)}</div>
-        <div class="line"><strong>Weekstatus:</strong> gemiddelde load ${avgAfter.toFixed(1)} / monotony ${monoAfter.toFixed(1)}</div>
+        <div class="line"><strong>Weekstatus:</strong> ${weekInfo.status}</div>
+        <div class="line"><strong>Weekcoach:</strong> ${weekInfo.coachText}</div>
+        <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
+        <div class="line"><strong>Monotony:</strong> ${monoText}</div>
         <div class="warn">${waarschuwing}</div>
 
         <div class="forecast">
@@ -496,21 +531,18 @@
       }
 
       const loads = week.map(x => x.load);
-      const gem = average(loads).toFixed(1);
-      const mon = monotony(loads).toFixed(1);
+      const weekInfo = buildWeekAssessment(loads);
+      const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
       const totaal = loads.reduce((a, b) => a + b, 0);
-
-      let status = "Stabiel";
-      if (+gem > 6.2) status = "Hoog";
-      if (+mon > 2.0) status = "Te eenvormig";
 
       result.innerHTML = `
         <div class="title">Weekstatus</div>
         <div class="box">Totale weekload: ${totaal}</div>
-        <div class="line"><strong>Dagen bewaard:</strong> ${week.length}</div>
-        <div class="line"><strong>Gemiddelde load:</strong> ${gem}</div>
-        <div class="line"><strong>Monotony:</strong> ${mon}</div>
-        <div class="warn">Status: ${status}</div>
+        <div class="line"><strong>Dagen bewaard:</strong> ${weekInfo.days}</div>
+        <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
+        <div class="line"><strong>Monotony:</strong> ${monoText}</div>
+        <div class="line"><strong>Status:</strong> ${weekInfo.status}</div>
+        <div class="warn">${weekInfo.coachText}</div>
       `;
     }
 
