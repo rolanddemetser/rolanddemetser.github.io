@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Weekcoach PRO</title>
+  <title>Weekcoach PRO+</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -172,8 +172,8 @@
 </head>
 <body>
   <div class="app">
-    <h1>Weekcoach PRO 🔥</h1>
-    <p class="sub">Persoonlijke coach voor vetverbranding, herstel, weekbelasting en voorspelling.</p>
+    <h1>Weekcoach PRO+ 🔥</h1>
+    <p class="sub">Persoonlijke coach voor vetverbranding, herstel, weekbelasting en morgenadvies.</p>
 
     <div class="panel">
       <input id="bb" type="number" inputmode="numeric" placeholder="Body Battery (bv 75)">
@@ -217,7 +217,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "weekcoach_pro_forecast";
+    const STORAGE_KEY = "weekcoach_pro_plus";
 
     function average(arr) {
       if (!arr.length) return 0;
@@ -232,9 +232,10 @@
     }
 
     function monotony(arr) {
+      if (arr.length < 3) return 0;
       const avg = average(arr);
       const sd = stddev(arr);
-      if (sd === 0) return avg > 0 ? 99 : 0;
+      if (sd === 0) return avg > 0 ? 3.0 : 0;
       return avg / sd;
     }
 
@@ -268,7 +269,14 @@
       return week;
     }
 
-    function dayScore(bb, sleep, gevoel, lichaam) {
+    function timingText(possible) {
+      if (possible === "am") return "Voormiddag: hou het compact en gecontroleerd.";
+      if (possible === "pm") return "Namiddag: goed moment voor een gerichte sessie.";
+      if (possible === "evening") return "Avond: liever geen zware of te lange prikkel.";
+      return "All day: kies het moment waarop je je het best voelt.";
+    }
+
+    function calculateScore(bb, sleep, gevoel, lichaam) {
       let score = 0;
 
       if (bb >= 80) score += 3;
@@ -288,35 +296,39 @@
       return score;
     }
 
-    function timingText(possible) {
-      if (possible === "am") return "Voormiddag: hou het compact en gecontroleerd.";
-      if (possible === "pm") return "Namiddag: goed moment voor een gerichte sessie.";
-      if (possible === "evening") return "Avond: liever geen zware of te lange prikkel.";
-      return "All day: kies het moment waarop je je het best voelt.";
-    }
-
-    function forecastTomorrow(todayScore, avgLoad, mono, kleurVandaag) {
-      let title = "";
-      let text = "";
-
-      if (todayScore >= 9 && (avgLoad > 5.5 || mono > 2.0)) {
-        title = "🔮 Morgen: waarschijnlijk herstel";
-        text = "Vandaag is stevig. Als je dit uitvoert zoals gepland, is morgen best een lichtere dag of hersteldag.";
-      } else if (kleurVandaag === "red") {
-        title = "🔮 Morgen: kans op betere dag";
-        text = "Als je vandaag echt rustig houdt, is de kans groot dat morgen weer een bruikbare vetverbrandingsdag wordt.";
-      } else if (kleurVandaag === "orange") {
-        title = "🔮 Morgen: mogelijk vetverbrandingsdag";
-        text = "Als je vandaag binnen plan blijft en niet uitbreidt, kan morgen vlotter aanvoelen.";
-      } else if (kleurVandaag === "yellow") {
-        title = "🔮 Morgen: opnieuw trainbaar, maar check week";
-        text = "Waarschijnlijk opnieuw een bruikbare dag, tenzij je weekbelasting te hoog oploopt.";
-      } else {
-        title = "🔮 Morgen: opletten met stapelen";
-        text = "Vandaag is sterk. Twee sterke dagen na elkaar kan, maar alleen als je weekbelasting onder controle blijft.";
+    function tomorrowForecast(todayScore, avgLoad, mono, kleurVandaag) {
+      if (todayScore >= 9 && avgLoad >= 6) {
+        return {
+          title: "🔮 Morgen: waarschijnlijk lichter",
+          text: "Vandaag is stevig. Morgen is best een vetverbrandingsdag light of een hersteldag."
+        };
       }
 
-      return { title, text };
+      if (kleurVandaag === "red") {
+        return {
+          title: "🔮 Morgen: kans op rebound",
+          text: "Als je vandaag echt rustig houdt, stijgt de kans op een betere dag morgen."
+        };
+      }
+
+      if (kleurVandaag === "orange") {
+        return {
+          title: "🔮 Morgen: mogelijk beter trainbaar",
+          text: "Als je vandaag niet uitbreidt, kan morgen vlotter en productiever aanvoelen."
+        };
+      }
+
+      if (kleurVandaag === "yellow") {
+        return {
+          title: "🔮 Morgen: opnieuw bruikbaar",
+          text: "Waarschijnlijk opnieuw een trainbare dag, tenzij je slaap of herstel tegenvalt."
+        };
+      }
+
+      return {
+        title: "🔮 Morgen: check opnieuw",
+        text: "Sterke dag vandaag. Morgen kan ook goed zijn, maar alleen als je vandaag beheerst blijft."
+      };
     }
 
     function coach() {
@@ -339,11 +351,12 @@
         return;
       }
 
-      const score = dayScore(bb, sleep, gevoel, lichaam);
+      const score = calculateScore(bb, sleep, gevoel, lichaam);
+
       const huidigeWeek = getWeekData();
-      const oudeLoads = huidigeWeek.map(x => x.load);
-      const avgBefore = average(oudeLoads);
-      const monoBefore = monotony(oudeLoads);
+      const vorigeLoads = huidigeWeek.map(x => x.load);
+      const avgBefore = average(vorigeLoads);
+      const monoBefore = monotony(vorigeLoads);
 
       let titel = "";
       let dagBesluit = "";
@@ -358,7 +371,7 @@
       if (gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55 || score <= 4) {
         titel = "🔴 HERSTEL VERPLICHT";
         dagBesluit = "Vandaag geen training.";
-        weekBesluit = "Je lichaam krijgt voorrang op je planning.";
+        weekBesluit = "Je lichaam krijgt voorrang.";
         advies = weer === "regen"
           ? "Zachte yoga of heel rustige korte gewone wandeling. Geen strand."
           : "Rustige wandeling of zachte yoga.";
@@ -369,12 +382,12 @@
         kleur = "red";
       }
 
-      else if (oudeLoads.length >= 3 && avgBefore > 6.0) {
+      else if (vorigeLoads.length >= 4 && avgBefore > 6.2) {
         titel = "🔴 WEEKREM";
         dagBesluit = "Vandaag bewust afremmen.";
         weekBesluit = "Je weekbelasting zit te hoog.";
         advies = weer === "regen"
-          ? "Korte gewone rustige wandeling of yoga. Geen strand."
+          ? "Korte rustige gewone wandeling of yoga. Geen strand."
           : "Korte rustige wandeling of yoga.";
         duur = "20–30 min.";
         stappen = "6500–7500";
@@ -383,9 +396,9 @@
         kleur = "red";
       }
 
-      else if (oudeLoads.length >= 4 && monoBefore > 2.2) {
+      else if (vorigeLoads.length >= 5 && monoBefore > 2.0) {
         titel = "🟠 AFREMDAG";
-        dagBesluit = "Vandaag lichter dan je misschien zou willen.";
+        dagBesluit = "Vandaag lichter houden.";
         weekBesluit = "Je weekpatroon wordt te eenvormig.";
         advies = weer === "regen"
           ? "Gewone rustige wandeling. Geen strandwandeling."
@@ -400,7 +413,7 @@
       else if (score <= 6) {
         titel = "🟠 LICHTE DAG";
         dagBesluit = "Vandaag bewegen, niet pushen.";
-        weekBesluit = "Week technisch onder controle.";
+        weekBesluit = "Week onder controle.";
         advies = weer === "regen"
           ? "Gewone rustige wandeling of binnenwandeling."
           : "Rustige wandeling in lage zone 2.";
@@ -444,7 +457,7 @@
       const avgAfter = average(newLoads);
       const monoAfter = monotony(newLoads);
 
-      const morgen = forecastTomorrow(score, avgAfter, monoAfter, kleur);
+      const forecast = tomorrowForecast(score, avgAfter, monoAfter, kleur);
 
       result.classList.add(kleur);
       result.innerHTML = `
@@ -461,8 +474,8 @@
         <div class="warn">${waarschuwing}</div>
 
         <div class="forecast">
-          <div class="forecast-title">${morgen.title}</div>
-          <div class="small">${morgen.text}</div>
+          <div class="forecast-title">${forecast.title}</div>
+          <div class="small">${forecast.text}</div>
         </div>
       `;
     }
@@ -488,8 +501,8 @@
       const totaal = loads.reduce((a, b) => a + b, 0);
 
       let status = "Stabiel";
-      if (+gem > 6) status = "Hoog";
-      if (+mon > 2.2) status = "Te eenvormig";
+      if (+gem > 6.2) status = "Hoog";
+      if (+mon > 2.0) status = "Te eenvormig";
 
       result.innerHTML = `
         <div class="title">Weekstatus</div>
