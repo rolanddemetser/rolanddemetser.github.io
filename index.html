@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Weekcoach V5</title>
 
-  <link rel="apple-touch-icon" href="https://chat.openai.com/mnt/data/7E4EF694-5FE2-46AC-BFD3-3083F594C0B5.jpeg">
+  <link rel="apple-touch-icon" href="icon-1024.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#f3f4f6">
@@ -13,23 +13,24 @@
   <style>
     :root {
       --bg: #f3f4f6;
-      --text: #111;
-      --muted: #666;
-      --border: #d6d6d6;
-      --card: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --border: #d7d7d7;
+      --white: #ffffff;
       --green: #dff5e3;
       --yellow: #f9efc8;
       --orange: #fde6d3;
       --red: #f9dede;
-      --dark: #0f0f10;
       --secondary: #7d8391;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 18px;
+      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 24px;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -38,12 +39,12 @@
     .app {
       max-width: 760px;
       margin: 0 auto;
-      padding: 18px 0 30px 0;
+      padding-top: 18px;
     }
 
     h1 {
-      margin: 0 0 6px 0;
-      font-size: 36px;
+      margin: 0 0 8px 0;
+      font-size: 38px;
       line-height: 1.02;
       font-weight: 800;
       letter-spacing: -0.02em;
@@ -57,18 +58,20 @@
     }
 
     .panel {
-      background: rgba(255,255,255,0.32);
+      background: rgba(255, 255, 255, 0.35);
       border-radius: 22px;
       padding: 2px;
     }
 
-    input, select, button {
+    input,
+    select,
+    button {
       width: 100%;
       padding: 16px;
       margin-top: 12px;
       border-radius: 16px;
       border: 1px solid var(--border);
-      background: var(--card);
+      background: var(--white);
       color: var(--text);
       font-size: 21px;
       appearance: none;
@@ -81,13 +84,13 @@
     }
 
     .primary {
-      background: #000;
-      color: #fff;
+      background: #000000;
+      color: #ffffff;
     }
 
     .secondary {
       background: var(--secondary);
-      color: white;
+      color: #ffffff;
       font-size: 18px;
     }
 
@@ -102,7 +105,8 @@
       padding: 14px;
     }
 
-    .card, .weekcard {
+    .card,
+    .weekcard {
       display: none;
       margin-top: 20px;
       padding: 18px;
@@ -125,7 +129,7 @@
     .box {
       margin-top: 12px;
       padding: 12px 14px;
-      background: rgba(255,255,255,0.6);
+      background: rgba(255, 255, 255, 0.62);
       border-radius: 14px;
       font-size: 20px;
       font-weight: 800;
@@ -147,7 +151,7 @@
     .section {
       margin-top: 16px;
       padding-top: 14px;
-      border-top: 1px solid rgba(0,0,0,0.12);
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .section-title {
@@ -226,24 +230,29 @@
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     }
 
-    function saveData(arr) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
     function saveToday(entry) {
       let data = getData();
       const key = todayKey();
-      data = data.filter(x => x.date !== key);
+
+      data = data.filter(item => item.date !== key);
       data.push({ ...entry, date: key });
       data.sort((a, b) => a.date.localeCompare(b.date));
-      if (data.length > 7) data = data.slice(-7);
+
+      if (data.length > 7) {
+        data = data.slice(-7);
+      }
+
       saveData(data);
       return data;
     }
 
     function average(arr) {
       if (!arr.length) return 0;
-      return arr.reduce((a, b) => a + b, 0) / arr.length;
+      return arr.reduce((sum, value) => sum + value, 0) / arr.length;
     }
 
     function stddev(arr) {
@@ -265,6 +274,7 @@
       if (arr.length < 2) return "onvoldoende data";
       const last = arr[arr.length - 1];
       const prev = arr[arr.length - 2];
+
       if (last > prev) return "⬆️ stijgend";
       if (last < prev) return "⬇️ dalend";
       return "➖ stabiel";
@@ -319,7 +329,8 @@
       const trend = trendText(loads);
       const heavyDays = data.filter(x => x.score >= 8).length;
       const recoveryDays = data.filter(x => x.score <= 4).length;
-      const consecutiveHeavy = data.length >= 2 &&
+      const consecutiveHeavy =
+        data.length >= 2 &&
         data[data.length - 1].score >= 8 &&
         data[data.length - 2].score >= 8;
 
@@ -488,7 +499,9 @@
         advies = weer === "regen"
           ? "Gewone stevige wandeling + eventueel korte HASfit."
           : "Strandwandeling met tempo + eventueel korte HASfit.";
-        duur = moment === "evening" ? "35–45 min wandelen + eventueel heel korte kracht." : "45–60 min wandelen + korte kracht.";
+        duur = moment === "evening"
+          ? "35–45 min wandelen + eventueel heel korte kracht."
+          : "45–60 min wandelen + korte kracht.";
         stappen = "10000+";
         hartslag = "Wandelen in zone 2, kracht kort en beheerst.";
         waarschuwing = weekInfo.avg > 7 && score > 8
@@ -506,8 +519,8 @@
       const lichaam = document.getElementById("lichaam").value;
       const weer = document.getElementById("weer").value;
       const moment = document.getElementById("moment").value;
-      const result = document.getElementById("result");
 
+      const result = document.getElementById("result");
       result.style.display = "block";
       result.className = "card";
 
@@ -543,6 +556,7 @@
         <div class="box">Trainingsscore vandaag: ${score}/10</div>
         <div class="box">Recovery vandaag: ${recovery}/100</div>
         <div class="box">Stappendoel: ${advice.stappen} stappen</div>
+
         <div class="line"><strong>Dagbesluit:</strong> ${advice.dagBesluit}</div>
         <div class="line"><strong>Vandaag:</strong> ${advice.advies}</div>
         <div class="line"><strong>Duur:</strong> ${advice.duur}</div>
@@ -554,6 +568,7 @@
         <div class="line"><strong>Gemiddelde recovery:</strong> ${weekInfo.avgRecovery.toFixed(0)}/100</div>
         <div class="line"><strong>Monotony:</strong> ${monoText}</div>
         <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
+
         <div class="warn">${advice.waarschuwing}</div>
 
         <div class="section">
@@ -579,7 +594,7 @@
       }
 
       const weekInfo = buildWeekAssessment(data);
-      const totalLoad = data.reduce((sum, x) => sum + x.score, 0);
+      const totalLoad = data.reduce((sum, item) => sum + item.score, 0);
       const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
 
       box.innerHTML = `
