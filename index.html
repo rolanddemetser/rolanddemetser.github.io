@@ -1,309 +1,195 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ochtendcoach Definitief</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ochtendcoach Niveau 2</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f3f4f6;
+      color: #111;
+      margin: 0;
+      padding: 20px;
+    }
 
-<style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  padding: 20px;
-  margin: 0;
-  background: #f3f4f6;
-  color: #111;
-}
+    h1 {
+      font-size: 34px;
+      margin: 0 0 8px 0;
+    }
 
-h1 {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
+    p.sub {
+      margin: 0 0 18px 0;
+      color: #555;
+      font-size: 18px;
+      line-height: 1.4;
+    }
 
-p {
-  margin-top: 0;
-  color: #555;
-}
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 22px;
+      border-radius: 14px;
+      border: 1px solid #ccc;
+      background: white;
+    }
 
-input, select, button {
-  width: 100%;
-  padding: 16px;
-  margin-top: 12px;
-  font-size: 20px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  background: white;
-}
+    button {
+      background: #111;
+      color: white;
+      font-weight: 700;
+      border: none;
+    }
 
-button {
-  background: black;
-  color: white;
-  font-weight: bold;
-}
+    .card {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 16px;
+      background: white;
+      line-height: 1.45;
+      display: none;
+    }
 
-#result {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 12px;
-  font-size: 19px;
-  line-height: 1.5;
-  white-space: pre-line;
-}
+    .green { background: #dcfce7; }
+    .yellow { background: #fef3c7; }
+    .orange { background: #ffedd5; }
+    .red { background: #fee2e2; }
 
-.green { background: #d9f7be; }
-.yellow { background: #fff3cd; }
-.orange { background: #ffe5b4; }
-.red { background: #f8d7da; }
-</style>
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .line {
+      font-size: 19px;
+      margin-top: 6px;
+    }
+
+    .small {
+      font-size: 17px;
+      color: #444;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Ochtendcoach 🔥</h1>
-<p>Dagadvies met focus op vetverbranding, herstel en realistisch trainen.</p>
+  <h1>Ochtendcoach 🔥</h1>
+  <p class="sub">Definitieve versie met focus op vetverbranding, herstel en realistisch trainen.</p>
 
-<input id="bb" type="number" placeholder="Body Battery (bv 75)">
-<input id="sleep" type="number" placeholder="Slaapscore (bv 80)">
+  <input id="bb" type="number" placeholder="Body Battery (bv 75)">
+  <input id="sleep" type="number" placeholder="Slaapscore (bv 80)">
 
-<select id="gevoel">
-  <option value="goed">Gevoel: goed</option>
-  <option value="matig">Gevoel: matig</option>
-  <option value="slecht">Gevoel: slecht</option>
-</select>
+  <select id="gevoel">
+    <option value="goed">Gevoel: goed</option>
+    <option value="matig">Gevoel: matig</option>
+    <option value="slecht">Gevoel: slecht</option>
+  </select>
 
-<select id="lichaam">
-  <option value="fris">Lichaam: fris</option>
-  <option value="stram">Lichaam: wat stram</option>
-  <option value="moe">Lichaam: moe / stijf</option>
-</select>
+  <select id="lichaam">
+    <option value="fris">Lichaam: fris</option>
+    <option value="stram">Lichaam: wat stram</option>
+    <option value="moe">Lichaam: moe / stijf</option>
+  </select>
 
-<select id="doel">
-  <option value="vetverbranding">Doel: vetverbranding</option>
-  <option value="herstel">Doel: herstel</option>
-  <option value="conditie">Doel: conditie</option>
-  <option value="kracht">Doel: kracht</option>
-</select>
+  <button onclick="coach()">Wat vandaag?</button>
 
-<button onclick="advies()">Wat vandaag?</button>
+  <div id="result" class="card"></div>
 
-<div id="result"></div>
+  <script>
+    function coach() {
+      const bb = parseInt(document.getElementById("bb").value);
+      const sleep = parseInt(document.getElementById("sleep").value);
+      const gevoel = document.getElementById("gevoel").value;
+      const lichaam = document.getElementById("lichaam").value;
+      const result = document.getElementById("result");
 
-<script>
-function advies() {
-  const bb = parseInt(document.getElementById("bb").value);
-  const sleep = parseInt(document.getElementById("sleep").value);
-  const gevoel = document.getElementById("gevoel").value;
-  const lichaam = document.getElementById("lichaam").value;
-  const doel = document.getElementById("doel").value;
-  const result = document.getElementById("result");
+      result.style.display = "block";
+      result.className = "card";
 
-  let tekst = "";
-  let kleur = "";
-
-  if (isNaN(bb) || isNaN(sleep)) {
-    result.className = "";
-    result.innerHTML = "Vul eerst Body Battery en slaapscore in.";
-    return;
-  }
-
-  // Eerste harde rem: slecht gevoel of moe lichaam
-  if (gevoel === "slecht" || lichaam === "moe") {
-    tekst =
-`🔴 Vandaag niet forceren
-
-Advies:
-• 20–30 min rustige wandeling
-• eventueel 10–15 min zachte yoga
-• geen HASfit
-
-Waarom:
-Je gevoel of je lichaam vraagt herstel.`;
-    kleur = "red";
-  }
-
-  // Topdag
-  else if (bb >= 80 && sleep >= 80 && gevoel === "goed" && lichaam === "fris") {
-    if (doel === "vetverbranding") {
-      tekst =
-`🟢 Topdag voor vetverbranding
-
-Advies:
-• 45–60 min wandelen in zone 2
-• + extra stappen of korte HASfit
-
-Waarom:
-Je cijfers en je lichaam zitten mee.`;
-    } else if (doel === "kracht") {
-      tekst =
-`🟢 Topdag voor kracht
-
-Advies:
-• volledige HASfit
-• + korte wandeling als cooling-down
-
-Waarom:
-Vandaag kan je degelijk trainen.`;
-    } else if (doel === "conditie") {
-      tekst =
-`🟢 Topdag voor conditie
-
-Advies:
-• stevige wandeling
-• of korte intervalprikkel
-• 40–60 min totaal
-
-Waarom:
-Goede dag om conditie te stimuleren.`;
-    } else {
-      tekst =
-`🟢 Goede dag voor actief herstel
-
-Advies:
-• 30–45 min wandelen
-• eventueel yoga
-
-Waarom:
-Je hebt ruimte, maar hoeft niet te forceren.`;
-    }
-    kleur = "green";
-  }
-
-  // Goede dag, maar niet top
-  else if (bb >= 60 && sleep >= 70) {
-    if (doel === "vetverbranding") {
-      if (lichaam === "stram") {
-        tekst =
-`🟡 Goede dag, maar lichaam wat stram
-
-Advies:
-• 35–50 min wandelen in zone 2
-• geen zware kracht
-
-Waarom:
-Perfect voor vetverbranding zonder te pushen.`;
-      } else {
-        tekst =
-`🟡 Goede vetverbrandingsdag
-
-Advies:
-• 45–60 min wandelen in zone 2
-• liever dit dan zware kracht
-
-Waarom:
-Buikvet aanpakken via rustige duurinspanning.`;
+      if (isNaN(bb) || isNaN(sleep)) {
+        result.innerHTML = `
+          <div class="title">Nog niet volledig</div>
+          <div class="line">Vul eerst Body Battery en slaapscore in.</div>
+        `;
+        return;
       }
-    } else if (doel === "kracht") {
-      if (lichaam === "stram") {
-        tekst =
-`🟠 Geen ideale krachtdag
 
-Advies:
-• korte lichte HASfit
-• of wandelen + mobiliteit
+      let score = 0;
 
-Waarom:
-Je lijf is niet volledig fris.`;
+      if (bb >= 80) score += 3;
+      else if (bb >= 70) score += 2;
+      else if (bb >= 60) score += 1;
+
+      if (sleep >= 80) score += 3;
+      else if (sleep >= 70) score += 2;
+      else if (sleep >= 60) score += 1;
+
+      if (gevoel === "goed") score += 2;
+      else if (gevoel === "matig") score += 1;
+
+      if (lichaam === "fris") score += 2;
+      else if (lichaam === "stram") score += 1;
+
+      let titel = "";
+      let advies = "";
+      let duur = "";
+      let stappen = "";
+      let hartslag = "";
+      let extra = "";
+      let kleur = "";
+
+      if (gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55) {
+        titel = "🔴 Hersteldag";
+        advies = "Rustige wandeling en/of zachte yoga.";
+        duur = "20–30 min rustig bewegen.";
+        stappen = "Doel: 6000–7000 stappen.";
+        hartslag = "Hou wandelen rustig, liefst onder zone 2.";
+        extra = "Geen HASfit. Vandaag herstel boven alles.";
+        kleur = "red";
+      }
+      else if (score <= 5) {
+        titel = "🟠 Voorzichtige dag";
+        advies = "Zone 2-wandeling, zonder krachttraining.";
+        duur = "30–40 min wandelen.";
+        stappen = "Doel: 7500–8500 stappen.";
+        hartslag = "Doelhartslag: ongeveer 95–105 bpm.";
+        extra = "Goed voor vetverbranding zonder extra stress.";
         kleur = "orange";
-      } else {
-        tekst =
-`🟡 Geschikte dag voor lichte tot matige kracht
-
-Advies:
-• kortere HASfit
-• of wandelen + lichte kracht
-
-Waarom:
-Trainbaar, maar niet maximaal.`;
       }
-    } else if (doel === "conditie") {
-      tekst =
-`🟡 Goede conditiedag
+      else if (score <= 8) {
+        titel = "🟡 Goede vetverbrandingsdag";
+        advies = "Stevige zone 2-wandeling.";
+        duur = "45–60 min wandelen.";
+        stappen = "Doel: 9000–10000 stappen.";
+        hartslag = "Doelhartslag: ongeveer 95–105 bpm, liever niet boven 110.";
+        extra = "Vandaag liever wandelen dan zware HASfit.";
+        kleur = "yellow";
+      }
+      else {
+        titel = "🟢 Sterke dag";
+        advies = "Zone 2-wandeling + eventueel korte HASfit.";
+        duur = "45–60 min wandelen + korte krachtprikkel.";
+        stappen = "Doel: 10000+ stappen.";
+        hartslag = "Wandelen vooral in zone 2, kracht kort en beheerst.";
+        extra = "Goede dag om vetverbranding en training te combineren.";
+        kleur = "green";
+      }
 
-Advies:
-• 35–50 min stevige wandeling
-• tempo iets hoger, maar gecontroleerd
-
-Waarom:
-Conditie verbeteren zonder roofbouw.`;
-    } else {
-      tekst =
-`🟡 Goede dag voor herstel in beweging
-
-Advies:
-• 30–45 min wandelen
-• eventueel yoga
-
-Waarom:
-Actief herstel past vandaag goed.`;
+      result.classList.add(kleur);
+      result.innerHTML = `
+        <div class="title">${titel}</div>
+        <div class="line"><strong>Vandaag:</strong> ${advies}</div>
+        <div class="line"><strong>Duur:</strong> ${duur}</div>
+        <div class="line"><strong>Stappen:</strong> ${stappen}</div>
+        <div class="line"><strong>Hartslag:</strong> ${hartslag}</div>
+        <div class="small">${extra}</div>
+      `;
     }
-
-    if (kleur !== "orange") kleur = "yellow";
-  }
-
-  // Middag / twijfel
-  else if (bb >= 40) {
-    if (doel === "vetverbranding") {
-      tekst =
-`🟠 Voorzichtige vetverbrandingsdag
-
-Advies:
-• 25–40 min rustige zone 2-wandeling
-• geen zware HASfit
-
-Waarom:
-Bewegen zonder stress verder op te jagen.`;
-    } else if (doel === "kracht") {
-      tekst =
-`🟠 Geen ideale kracht-dag
-
-Advies:
-• liever wandelen of yoga
-• enkel zeer lichte kracht als je echt wil
-
-Waarom:
-Herstel heeft voorrang.`;
-    } else if (doel === "conditie") {
-      tekst =
-`🟠 Voorzichtig met conditiewerk
-
-Advies:
-• rustige wandeling
-• geen interval
-
-Waarom:
-Vandaag niet jagen op prestatie.`;
-    } else {
-      tekst =
-`🟠 Herstel heeft voorrang
-
-Advies:
-• rustige wandeling
-• korte yoga
-
-Waarom:
-Je lichaam laten opveren is slimmer.`;
-    }
-    kleur = "orange";
-  }
-
-  // Lage reserve
-  else {
-    tekst =
-`🔴 Rustdag
-
-Advies:
-• geen training
-• hooguit korte rustige wandeling
-• veel herstel vandaag
-
-Waarom:
-Herstel is vandaag productiever dan forceren.`;
-    kleur = "red";
-  }
-
-  result.className = kleur;
-  result.innerHTML = tekst;
-}
-</script>
+  </script>
 
 </body>
 </html>
