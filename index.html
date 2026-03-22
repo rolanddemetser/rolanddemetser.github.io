@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ochtendcoach</title>
+
+<style>
+body {font-family: -apple-system; padding:20px; background:#f3f4f6;}
+input,select,button {width:100%; padding:16px; margin-top:10px; font-size:20px; border-radius:10px;}
+button {background:black; color:white;}
+#result {margin-top:20px; background:white; padding:15px; border-radius:10px;}
+</style>
+</head>
+
+<body>
+
+<h1>Ochtendcoach</h1>
+
+<input id="bb" placeholder="Body Battery">
+<input id="sl" placeholder="Slaapscore">
+
+<select id="f">
+<option>Goed</option>
+<option>Matig</option>
+<option>Slecht</option>
+</select>
+
+<button onclick="go()">Wat vandaag?</button>
+
+<div id="result"></div>
+
+<script>
+function go() {
+let bb = parseInt(document.getElementById("bb").value);
+let sl = parseInt(document.getElementById("sl").value);
+let f = document.getElementById("f").value;
+
+let advies = "";
+
+if (isNaN(bb) || isNaN(sl)) {
+advies = "Vul alles in.";
+}
+else if (bb < 40 || sl < 60 || f === "Slecht") {
+advies = "Rustdag: wandelen + yoga.";
+}
+else if (bb < 70 || sl < 75 || f === "Matig") {
+advies = "Lichte training.";
+}
+else {
+advies = "Goede training 💪";
+}
+
+document.getElementById("result").innerText = advies;
+}
+</script>
+
+</body>
+</html>
