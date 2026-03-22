@@ -2,65 +2,119 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Weekcoach PRO</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Weekcoach">
+  <meta name="theme-color" content="#f3f4f6">
+
   <style>
+    :root {
+      --bg: #f3f4f6;
+      --text: #111;
+      --muted: #555;
+      --card: #ffffff;
+      --border: #d1d5db;
+      --green: #dcfce7;
+      --yellow: #fef3c7;
+      --orange: #ffedd5;
+      --red: #fee2e2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f3f4f6;
-      color: #111;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 18px;
+    }
+
+    .app {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px 0 28px 0;
     }
 
     h1 {
       font-size: 34px;
-      margin: 0 0 6px 0;
+      line-height: 1.05;
+      margin: 0 0 8px 0;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
     .sub {
       margin: 0 0 18px 0;
-      color: #555;
+      color: var(--muted);
       font-size: 18px;
-      line-height: 1.4;
+      line-height: 1.35;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.45);
+      border-radius: 18px;
+      padding: 2px;
     }
 
     input, select, button {
       width: 100%;
-      box-sizing: border-box;
       padding: 16px;
       margin-top: 12px;
       font-size: 22px;
-      border-radius: 14px;
-      border: 1px solid #ccc;
-      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      appearance: none;
+      -webkit-appearance: none;
     }
 
     button {
       background: #111;
       color: white;
-      font-weight: 700;
+      font-weight: 800;
       border: none;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+
+    button.secondary {
+      background: #6b7280;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 14px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
     }
 
     .card {
       margin-top: 20px;
       padding: 18px;
-      border-radius: 16px;
-      background: white;
+      border-radius: 20px;
+      background: var(--card);
       line-height: 1.45;
       display: none;
     }
 
-    .green { background: #dcfce7; }
-    .yellow { background: #fef3c7; }
-    .orange { background: #ffedd5; }
-    .red { background: #fee2e2; }
+    .green { background: var(--green); }
+    .yellow { background: var(--yellow); }
+    .orange { background: var(--orange); }
+    .red { background: var(--red); }
 
     .title {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       margin-bottom: 10px;
+      line-height: 1.1;
     }
 
     .line {
@@ -72,108 +126,86 @@
       font-size: 17px;
       color: #444;
       margin-top: 10px;
+      line-height: 1.35;
     }
 
     .box {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.55);
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .muted {
-      opacity: 0.8;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
       margin-top: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 14px;
+      font-size: 20px;
+      font-weight: 800;
     }
 
-    .row button {
-      margin-top: 0;
-      font-size: 18px;
-      padding: 12px;
+    .warn {
+      margin-top: 12px;
+      font-weight: 800;
+      color: #991b1b;
+      line-height: 1.35;
     }
 
-    .secondary {
-      background: #666;
+    .footer-note {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (display-mode: standalone) {
+      body {
+        padding-top: calc(env(safe-area-inset-top) + 10px);
+      }
     }
   </style>
 </head>
 <body>
+  <div class="app">
+    <h1>Weekcoach PRO 🔥</h1>
+    <p class="sub">Vetverbranding, herstel en weekbelasting in één coach.</p>
 
-  <h1>Weekcoach PRO 🔥</h1>
-  <p class="sub">Vetverbranding, herstel en weekbelasting in één coach.</p>
+    <div class="panel">
+      <input id="bb" type="number" inputmode="numeric" placeholder="Body Battery (bv 75)">
+      <input id="sleep" type="number" inputmode="numeric" placeholder="Slaapscore (bv 80)">
 
-  <input id="bb" type="number" placeholder="Body Battery (bv 75)">
-  <input id="sleep" type="number" placeholder="Slaapscore (bv 80)">
+      <select id="gevoel">
+        <option value="goed">Gevoel: goed</option>
+        <option value="matig">Gevoel: matig</option>
+        <option value="slecht">Gevoel: slecht</option>
+      </select>
 
-  <select id="gevoel">
-    <option value="goed">Gevoel: goed</option>
-    <option value="matig">Gevoel: matig</option>
-    <option value="slecht">Gevoel: slecht</option>
-  </select>
+      <select id="lichaam">
+        <option value="fris">Lichaam: fris</option>
+        <option value="stram">Lichaam: stram</option>
+        <option value="moe">Lichaam: moe</option>
+      </select>
 
-  <select id="lichaam">
-    <option value="fris">Lichaam: fris</option>
-    <option value="stram">Lichaam: wat stram</option>
-    <option value="moe">Lichaam: moe / stijf</option>
-  </select>
+      <select id="weer">
+        <option value="droog">Weer: droog</option>
+        <option value="regen">Weer: regen</option>
+      </select>
 
-  <select id="weer">
-    <option value="droog">Weer: droog</option>
-    <option value="regen">Weer: regen</option>
-  </select>
+      <select id="possible">
+        <option value="am">Possible: AM</option>
+        <option value="pm">Possible: PM</option>
+        <option value="evening">Possible: Evening</option>
+        <option value="all">Possible: All day</option>
+      </select>
 
-  <select id="possible">
-    <option value="am">Possible: AM</option>
-    <option value="pm">Possible: PM</option>
-    <option value="evening">Possible: Evening</option>
-    <option value="all day">Possible: All day</option>
-  </select>
+      <button onclick="coach()">Wat vandaag?</button>
 
-  <button onclick="coach()">Wat vandaag?</button>
+      <div class="row">
+        <button class="secondary" onclick="toonWeek()">Toon weekstatus</button>
+        <button class="secondary" onclick="resetWeek()">Reset week</button>
+      </div>
+    </div>
 
-  <div class="row">
-    <button class="secondary" onclick="toonWeek()">Toon weekstatus</button>
-    <button class="secondary" onclick="resetWeek()">Reset week</button>
+    <div id="result" class="card"></div>
+
+    <div class="footer-note">Tip: zet deze pagina op je beginscherm voor echte app-ervaring.</div>
   </div>
 
-  <div id="result" class="card"></div>
-
   <script>
-    function berekenDagLoad(bb, sleep, gevoel, lichaam) {
-      let load = 0;
-
-      if (bb >= 80) load += 3;
-      else if (bb >= 70) load += 2;
-      else if (bb >= 60) load += 1;
-
-      if (sleep >= 80) load += 3;
-      else if (sleep >= 70) load += 2;
-      else if (sleep >= 60) load += 1;
-
-      if (gevoel === "goed") load += 2;
-      else if (gevoel === "matig") load += 1;
-
-      if (lichaam === "fris") load += 2;
-      else if (lichaam === "stram") load += 1;
-
-      return load;
-    }
-
-    function haalWeekData() {
-      return JSON.parse(localStorage.getItem("weekcoach_pro") || "[]");
-    }
-
-    function bewaarWeekData(data) {
-      localStorage.setItem("weekcoach_pro", JSON.stringify(data));
-    }
-
     function gemiddelde(arr) {
       if (!arr.length) return 0;
       return arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -182,30 +214,41 @@
     function stddev(arr) {
       if (arr.length < 2) return 0;
       const avg = gemiddelde(arr);
-      const variance = gemiddelde(arr.map(x => Math.pow(x - avg, 2)));
+      const variance = gemiddelde(arr.map(x => (x - avg) ** 2));
       return Math.sqrt(variance);
     }
 
-    function monotony(arr) {
+    function berekenMonotony(arr) {
       const avg = gemiddelde(arr);
       const sd = stddev(arr);
       if (sd === 0) return avg > 0 ? 99 : 0;
       return avg / sd;
     }
 
+    function berekenScore(bb, sleep, gevoel, lichaam) {
+      let score = 0;
+
+      score += bb > 75 ? 3 : bb > 65 ? 2 : bb > 55 ? 1 : 0;
+      score += sleep > 80 ? 3 : sleep > 70 ? 2 : sleep > 60 ? 1 : 0;
+      score += gevoel === "goed" ? 2 : gevoel === "matig" ? 1 : 0;
+      score += lichaam === "fris" ? 2 : lichaam === "stram" ? 1 : 0;
+
+      return score;
+    }
+
     function coach() {
-      const bb = parseInt(document.getElementById("bb").value);
-      const sleep = parseInt(document.getElementById("sleep").value);
+      const bb = +document.getElementById("bb").value;
+      const sleep = +document.getElementById("sleep").value;
       const gevoel = document.getElementById("gevoel").value;
       const lichaam = document.getElementById("lichaam").value;
       const weer = document.getElementById("weer").value;
       const possible = document.getElementById("possible").value;
-      const result = document.getElementById("result");
 
+      const result = document.getElementById("result");
       result.style.display = "block";
       result.className = "card";
 
-      if (isNaN(bb) || isNaN(sleep)) {
+      if (!bb || !sleep) {
         result.innerHTML = `
           <div class="title">Nog niet volledig</div>
           <div class="line">Vul eerst Body Battery en slaapscore in.</div>
@@ -213,12 +256,12 @@
         return;
       }
 
-      const vandaagLoad = berekenDagLoad(bb, sleep, gevoel, lichaam);
+      const score = berekenScore(bb, sleep, gevoel, lichaam);
 
-      let week = haalWeekData();
-      const oudeLoads = week.map(d => d.load);
-      const weekGem = gemiddelde(oudeLoads);
-      const weekMon = monotony(oudeLoads);
+      let week = JSON.parse(localStorage.getItem("weekcoach_ultra_app") || "[]");
+      const vorigeLoads = week.map(x => x.load);
+      const weekGem = gemiddelde(vorigeLoads);
+      const monotony = berekenMonotony(vorigeLoads);
 
       let titel = "";
       let advies = "";
@@ -228,7 +271,6 @@
       let timing = "";
       let waarschuwing = "";
       let kleur = "";
-      let coachScore = vandaagLoad;
 
       if (possible === "am") {
         timing = "Voormiddag: hou het compact en gecontroleerd.";
@@ -237,112 +279,112 @@
       } else if (possible === "evening") {
         timing = "Avond: liever geen zware of te lange prikkel.";
       } else {
-        timing = "All day: kies het moment waarop je je best voelt.";
+        timing = "All day: kies het moment waarop je je het best voelt.";
       }
 
-      if (gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55) {
-        titel = "🔴 Hersteldag";
+      if (score <= 4 || gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55) {
+        titel = "🔴 HERSTEL VERPLICHT";
         advies = weer === "regen"
-          ? "Zachte yoga of rustige korte wandeling, niet op het strand."
-          : "Rustige wandeling of zachte yoga.";
-        duur = possible === "all day" ? "20–30 min rustig bewegen." : "15–25 min rustig bewegen.";
-        stappen = "6000–7000 stappen";
-        hartslag = "Liefst onder zone 2.";
-        waarschuwing = "Niet uitbreiden vandaag. Geen HASfit.";
+          ? "Alleen zachte yoga of een heel rustige korte gewone wandeling. Geen strand."
+          : "Alleen rustige wandeling of zachte yoga.";
+        duur = "20–30 min MAX";
+        stappen = "6000–7000";
+        hartslag = "laag, liefst onder zone 2";
+        waarschuwing = "Vandaag niet trainen. Niet onderhandelen met jezelf.";
         kleur = "red";
       }
 
-      else if (week.length >= 3 && weekGem >= 5.5) {
-        titel = "🔴 Rust afdwingen";
+      else if (week.length >= 3 && weekGem > 6) {
+        titel = "🔴 WEEKREM";
         advies = weer === "regen"
-          ? "Korte gewone wandeling of yoga. Geen strand en geen HASfit."
+          ? "Korte rustige gewone wandeling of yoga. Geen strand en geen HASfit."
           : "Korte rustige wandeling of yoga.";
-        duur = "20–30 min.";
-        stappen = "6500–7500 stappen";
-        hartslag = "Rustig, ruim onder zone 2.";
-        waarschuwing = "Je weekbelasting is hoog. Vandaag herstel, ook als je je goed voelt.";
+        duur = "20–30 min";
+        stappen = "6500–7500";
+        hartslag = "laag en rustig";
+        waarschuwing = "Je weekbelasting is te hoog. Vandaag afremmen.";
         kleur = "red";
       }
 
-      else if (week.length >= 4 && weekMon > 2.2) {
-        titel = "🟠 Afremdag";
+      else if (week.length >= 4 && monotony > 2.2) {
+        titel = "🟠 AFREMDAG";
         advies = weer === "regen"
           ? "Gewone rustige wandeling. Geen strandwandeling."
-          : "Rustige zone 2-wandeling zonder tempo-opbouw.";
-        duur = "30–40 min.";
-        stappen = "7500–8500 stappen";
-        hartslag = "Ongeveer 95–102 bpm.";
-        waarschuwing = "Je weekpatroon wordt te eenvormig. Vandaag niet pushen.";
+          : "Rustige zone 2-wandeling zonder extra tempo.";
+        duur = possible === "evening" ? "25–30 min" : "30–40 min";
+        stappen = "7500–8500";
+        hartslag = "95–102 bpm";
+        waarschuwing = "Te veel gelijkaardige belasting. Vandaag simpel houden.";
         kleur = "orange";
       }
 
-      else if (coachScore <= 5) {
-        titel = "🟠 Voorzichtige dag";
+      else if (score <= 6) {
+        titel = "🟠 LICHTE DAG";
         advies = weer === "regen"
-          ? "Rustige gewone wandeling of binnenwandeling."
-          : "Rustige zone 2-wandeling.";
-        duur = possible === "evening" ? "25–30 min rustig." : "30–40 min.";
-        stappen = "7500–8500 stappen";
-        hartslag = "Ongeveer 95–105 bpm.";
-        waarschuwing = "Geen zware HASfit. Blijf binnen plan.";
+          ? "Gewone rustige wandeling of binnenwandeling."
+          : "Rustige wandeling in lage zone 2.";
+        duur = possible === "evening" ? "25–30 min" : "30–40 min";
+        stappen = "7500–8500";
+        hartslag = "95–105 bpm";
+        waarschuwing = "Geen krachttraining. Niet uitbreiden.";
         kleur = "orange";
       }
 
-      else if (coachScore <= 8) {
-        titel = "🟡 Goede vetverbrandingsdag";
+      else if (score <= 8) {
+        titel = "🟡 VETVERBRANDING";
         advies = weer === "regen"
-          ? "Stevige gewone wandeling in zone 2. Geen strand."
+          ? "Stevige gewone wandeling. Geen strand."
           : "Stevige strandwandeling in zone 2.";
-        duur = possible === "am" ? "35–45 min." : possible === "evening" ? "35–45 min, rustig eindigen." : "45–60 min.";
-        stappen = "9000–10000 stappen";
-        hartslag = "Ongeveer 95–105 bpm, liever niet boven 110.";
-        waarschuwing = "Vandaag liever wandelen dan zware HASfit.";
+        duur = possible === "am" ? "35–45 min" : possible === "evening" ? "35–45 min" : "45–60 min";
+        stappen = "9000–10000";
+        hartslag = "95–105 bpm, liever niet boven 110";
+        waarschuwing = "Vandaag vetverbranding centraal. Liever wandelen dan zware HASfit.";
         kleur = "yellow";
       }
 
       else {
-        titel = "🟢 Sterke dag";
+        titel = "🟢 STERKE DAG";
         advies = weer === "regen"
-          ? "Stevige gewone wandeling + eventueel korte HASfit."
-          : "Strandwandeling met stevig tempo + eventueel korte HASfit.";
-        duur = possible === "evening" ? "35–45 min wandelen + eventueel heel korte kracht." : "45–60 min wandelen + korte krachtprikkel.";
-        stappen = "10000+ stappen";
-        hartslag = "Wandelen in zone 2, kracht kort en beheerst.";
+          ? "Gewone stevige wandeling + eventueel korte HASfit."
+          : "Strandwandeling met tempo + eventueel korte HASfit.";
+        duur = possible === "evening" ? "35–45 min wandelen + eventueel heel korte kracht" : "45–60 min wandelen + korte kracht";
+        stappen = "10000+";
+        hartslag = "wandelen in zone 2, kracht kort en beheerst";
         waarschuwing = "Goede dag, maar nog altijd: niet onnodig uitbreiden.";
         kleur = "green";
       }
 
       week.push({
         date: new Date().toISOString(),
-        load: coachScore
+        load: score
       });
-
       if (week.length > 7) week.shift();
-      bewaarWeekData(week);
+      localStorage.setItem("weekcoach_ultra_app", JSON.stringify(week));
 
-      const nieuweLoads = week.map(d => d.load);
-      const nieuweGem = gemiddelde(nieuweLoads).toFixed(1);
-      const nieuweMon = monotony(nieuweLoads).toFixed(1);
+      const nieuweLoads = week.map(x => x.load);
+      const nieuwGem = gemiddelde(nieuweLoads).toFixed(1);
+      const nieuweMon = berekenMonotony(nieuweLoads).toFixed(1);
 
       result.classList.add(kleur);
       result.innerHTML = `
         <div class="title">${titel}</div>
-        <div class="box">Trainingsscore vandaag: ${coachScore} / 10</div>
-        <div class="box">Stappendoel: ${stappen}</div>
+        <div class="box">Trainingsscore vandaag: ${score}/10</div>
+        <div class="box">Stappendoel: ${stappen} stappen</div>
         <div class="line"><strong>Vandaag:</strong> ${advies}</div>
         <div class="line"><strong>Duur:</strong> ${duur}</div>
         <div class="line"><strong>Hartslag:</strong> ${hartslag}</div>
         <div class="line"><strong>Possible:</strong> ${timing}</div>
-        <div class="line"><strong>Weekbelasting:</strong> gemiddeld ${nieuweGem} / monotony ${nieuweMon}</div>
-        <div class="small">${waarschuwing}</div>
+        <div class="line"><strong>Week:</strong> gemiddelde load ${nieuwGem} / monotony ${nieuweMon}</div>
+        <div class="warn">${waarschuwing}</div>
       `;
     }
 
     function toonWeek() {
       const result = document.getElementById("result");
-      const week = haalWeekData();
+      let week = JSON.parse(localStorage.getItem("weekcoach_ultra_app") || "[]");
+
       result.style.display = "block";
-      result.className = "card";
+      result.className = "card yellow";
 
       if (!week.length) {
         result.innerHTML = `
@@ -352,29 +394,27 @@
         return;
       }
 
-      const loads = week.map(d => d.load);
+      const loads = week.map(x => x.load);
       const gem = gemiddelde(loads).toFixed(1);
-      const mon = monotony(loads).toFixed(1);
-      const totaal = loads.reduce((a,b) => a+b, 0);
+      const mon = berekenMonotony(loads).toFixed(1);
+      const totaal = loads.reduce((a, b) => a + b, 0);
 
       let status = "Stabiel";
-      if (gem >= 5.5) status = "Hoog";
-      if (mon > 2.2) status = "Eenvormig / oppassen";
+      if (+gem > 6) status = "Hoog";
+      if (+mon > 2.2) status = "Te eenvormig";
 
-      result.style.display = "block";
-      result.className = "card yellow";
       result.innerHTML = `
         <div class="title">Weekstatus</div>
+        <div class="box">Totale weekload: ${totaal}</div>
         <div class="line"><strong>Dagen bewaard:</strong> ${week.length}</div>
-        <div class="line"><strong>Totale weekload:</strong> ${totaal}</div>
         <div class="line"><strong>Gemiddelde load:</strong> ${gem}</div>
         <div class="line"><strong>Monotony:</strong> ${mon}</div>
-        <div class="small">Status: ${status}</div>
+        <div class="warn">Status: ${status}</div>
       `;
     }
 
     function resetWeek() {
-      localStorage.removeItem("weekcoach_pro");
+      localStorage.removeItem("weekcoach_ultra_app");
       const result = document.getElementById("result");
       result.style.display = "block";
       result.className = "card orange";
@@ -384,6 +424,5 @@
       `;
     }
   </script>
-
 </body>
 </html>
