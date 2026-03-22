@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ochtendcoach Niveau 2</title>
+  <title>Ochtendcoach Definitief</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -18,7 +18,7 @@
       margin: 0 0 8px 0;
     }
 
-    p.sub {
+    .sub {
       margin: 0 0 18px 0;
       color: #555;
       font-size: 18px;
@@ -65,7 +65,7 @@
 
     .line {
       font-size: 19px;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     .small {
@@ -73,12 +73,21 @@
       color: #444;
       margin-top: 10px;
     }
+
+    .steps-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.55);
+      font-size: 20px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
 
   <h1>Ochtendcoach 🔥</h1>
-  <p class="sub">Definitieve versie met focus op vetverbranding, herstel en realistisch trainen.</p>
+  <p class="sub">Focus op vetverbranding, herstel en realistisch trainen.</p>
 
   <input id="bb" type="number" placeholder="Body Battery (bv 75)">
   <input id="sleep" type="number" placeholder="Slaapscore (bv 80)">
@@ -95,6 +104,18 @@
     <option value="moe">Lichaam: moe / stijf</option>
   </select>
 
+  <select id="weer">
+    <option value="droog">Weer: droog</option>
+    <option value="regen">Weer: regen</option>
+  </select>
+
+  <select id="possible">
+    <option value="am">Possible: AM</option>
+    <option value="pm">Possible: PM</option>
+    <option value="evening">Possible: Evening</option>
+    <option value="all day">Possible: All day</option>
+  </select>
+
   <button onclick="coach()">Wat vandaag?</button>
 
   <div id="result" class="card"></div>
@@ -105,6 +126,8 @@
       const sleep = parseInt(document.getElementById("sleep").value);
       const gevoel = document.getElementById("gevoel").value;
       const lichaam = document.getElementById("lichaam").value;
+      const weer = document.getElementById("weer").value;
+      const possible = document.getElementById("possible").value;
       const result = document.getElementById("result");
 
       result.style.display = "block";
@@ -140,40 +163,91 @@
       let stappen = "";
       let hartslag = "";
       let extra = "";
+      let timing = "";
       let kleur = "";
+
+      // timinglogica
+      if (possible === "am") {
+        timing = "Beste timing: voormiddag. Hou het haalbaar en start niet te agressief.";
+      } else if (possible === "pm") {
+        timing = "Beste timing: namiddag. Compact en doelgericht is hier ideaal.";
+      } else if (possible === "evening") {
+        timing = "Beste timing: avond. Liever geen te zware sessie laat op de dag.";
+      } else {
+        timing = "Beste timing: je hebt speelruimte vandaag. Kies het moment waarop je je het best voelt.";
+      }
 
       if (gevoel === "slecht" || lichaam === "moe" || bb < 45 || sleep < 55) {
         titel = "🔴 Hersteldag";
-        advies = "Rustige wandeling en/of zachte yoga.";
-        duur = "20–30 min rustig bewegen.";
-        stappen = "Doel: 6000–7000 stappen.";
-        hartslag = "Hou wandelen rustig, liefst onder zone 2.";
+
+        if (weer === "regen") {
+          advies = "Zachte yoga of heel rustige korte wandeling, niet op het strand.";
+        } else {
+          advies = "Rustige wandeling of zachte yoga.";
+        }
+
+        duur = possible === "all day" ? "20–30 min rustig bewegen." : "15–25 min rustig bewegen.";
+        stappen = "6000–7000 stappen";
+        hartslag = "Liefst onder zone 2.";
         extra = "Geen HASfit. Vandaag herstel boven alles.";
         kleur = "red";
       }
+
       else if (score <= 5) {
         titel = "🟠 Voorzichtige dag";
-        advies = "Zone 2-wandeling, zonder krachttraining.";
-        duur = "30–40 min wandelen.";
-        stappen = "Doel: 7500–8500 stappen.";
-        hartslag = "Doelhartslag: ongeveer 95–105 bpm.";
-        extra = "Goed voor vetverbranding zonder extra stress.";
+
+        if (weer === "regen") {
+          advies = "Rustige gewone wandeling of binnenwandeling. Geen strandwandeling.";
+        } else {
+          advies = "Rustige zone 2-wandeling.";
+        }
+
+        if (possible === "am") duur = "25–35 min wandelen.";
+        else if (possible === "pm") duur = "30–35 min wandelen.";
+        else if (possible === "evening") duur = "25–30 min wandelen, rustig.";
+        else duur = "30–40 min wandelen.";
+
+        stappen = "7500–8500 stappen";
+        hartslag = "Ongeveer 95–105 bpm.";
+        extra = "Niet forceren. Geen zware HASfit.";
         kleur = "orange";
       }
+
       else if (score <= 8) {
         titel = "🟡 Goede vetverbrandingsdag";
-        advies = "Stevige zone 2-wandeling.";
-        duur = "45–60 min wandelen.";
-        stappen = "Doel: 9000–10000 stappen.";
-        hartslag = "Doelhartslag: ongeveer 95–105 bpm, liever niet boven 110.";
+
+        if (weer === "regen") {
+          advies = "Stevige gewone wandeling in zone 2. Geen strandwandeling.";
+        } else {
+          advies = "Stevige strandwandeling in zone 2.";
+        }
+
+        if (possible === "am") duur = "35–45 min wandelen.";
+        else if (possible === "pm") duur = "40–50 min wandelen.";
+        else if (possible === "evening") duur = "35–45 min wandelen, niet te laat te intens.";
+        else duur = "45–60 min wandelen.";
+
+        stappen = "9000–10000 stappen";
+        hartslag = "Ongeveer 95–105 bpm, liever niet boven 110.";
         extra = "Vandaag liever wandelen dan zware HASfit.";
         kleur = "yellow";
       }
+
       else {
         titel = "🟢 Sterke dag";
-        advies = "Zone 2-wandeling + eventueel korte HASfit.";
-        duur = "45–60 min wandelen + korte krachtprikkel.";
-        stappen = "Doel: 10000+ stappen.";
+
+        if (weer === "regen") {
+          advies = "Stevige gewone wandeling + eventueel korte HASfit. Geen strandwandeling.";
+        } else {
+          advies = "Strandwandeling met stevig tempo + eventueel korte HASfit.";
+        }
+
+        if (possible === "am") duur = "40–50 min wandelen + optioneel 10 min HASfit.";
+        else if (possible === "pm") duur = "45–55 min wandelen + korte krachtprikkel.";
+        else if (possible === "evening") duur = "35–45 min wandelen + eventueel heel korte HASfit.";
+        else duur = "45–60 min wandelen + korte krachtprikkel.";
+
+        stappen = "10000+ stappen";
         hartslag = "Wandelen vooral in zone 2, kracht kort en beheerst.";
         extra = "Goede dag om vetverbranding en training te combineren.";
         kleur = "green";
@@ -182,10 +256,11 @@
       result.classList.add(kleur);
       result.innerHTML = `
         <div class="title">${titel}</div>
+        <div class="steps-box">Stappendoel: ${stappen}</div>
         <div class="line"><strong>Vandaag:</strong> ${advies}</div>
         <div class="line"><strong>Duur:</strong> ${duur}</div>
-        <div class="line"><strong>Stappen:</strong> ${stappen}</div>
         <div class="line"><strong>Hartslag:</strong> ${hartslag}</div>
+        <div class="line"><strong>Possible:</strong> ${timing}</div>
         <div class="small">${extra}</div>
       `;
     }
