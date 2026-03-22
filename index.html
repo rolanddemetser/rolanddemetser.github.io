@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Weekcoach V4</title>
+  <title>Weekcoach V5</title>
 
   <link rel="apple-touch-icon" href="icon-1024.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -166,7 +166,7 @@
 </head>
 <body>
   <div class="app">
-    <h1>Weekcoach V4 🔥</h1>
+    <h1>Weekcoach V5 🔥</h1>
     <p class="subtitle">Slimmere coach voor vetverbranding, herstel, weektrend en morgenintentie.</p>
 
     <div class="panel">
@@ -212,7 +212,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "weekcoach_v4_data";
+    const STORAGE_KEY = "weekcoach_v5_data";
 
     function todayKey() {
       const d = new Date();
@@ -290,8 +290,15 @@
       return Math.max(1, Math.min(10, score));
     }
 
-    function recoveryScore(bb, sleep, score) {
-      let value = Math.round((bb * 0.4) + (sleep * 0.4) + (score * 2));
+    function recoveryScore(bb, sleep, score, gevoel, lichaam) {
+      let value = (bb * 0.35) + (sleep * 0.35) + (score * 2);
+
+      if (gevoel === "matig") value -= 4;
+      if (gevoel === "slecht") value -= 10;
+      if (lichaam === "stram") value -= 5;
+      if (lichaam === "moe") value -= 10;
+
+      value = Math.round(value);
       return Math.max(0, Math.min(100, value));
     }
 
@@ -304,12 +311,17 @@
 
     function buildWeekAssessment(data) {
       const loads = data.map(x => x.score);
+      const recoveries = data.map(x => x.recovery);
       const days = loads.length;
       const avg = average(loads);
+      const avgRecovery = average(recoveries);
       const mono = calcMonotony(loads);
       const trend = trendText(loads);
       const heavyDays = data.filter(x => x.score >= 8).length;
       const recoveryDays = data.filter(x => x.score <= 4).length;
+      const consecutiveHeavy = data.length >= 2 &&
+        data[data.length - 1].score >= 8 &&
+        data[data.length - 2].score >= 8;
 
       let status = "";
       let coachText = "";
@@ -320,6 +332,9 @@
       } else if (mono !== null && mono > 2.0) {
         status = "Te eenvormig patroon";
         coachText = "Je belasting is te weinig gevarieerd. Dat verhoogt het risico op overbelasting.";
+      } else if (consecutiveHeavy) {
+        status = "Stapelen";
+        coachText = "Je hebt zware dagen op rij. Nog eens doorduwen is meestal geen slimme keuze.";
       } else if (heavyDays >= 3) {
         status = "Sterke week, opletten";
         coachText = "Je hebt al meerdere stevige dagen. Nog zwaarder gaan is niet vanzelf slim.";
@@ -334,10 +349,21 @@
         coachText = "Je weekbelasting is voorlopig eerder licht.";
       }
 
-      return { days, avg, mono, trend, heavyDays, recoveryDays, status, coachText };
+      return {
+        days,
+        avg,
+        avgRecovery,
+        mono,
+        trend,
+        heavyDays,
+        recoveryDays,
+        consecutiveHeavy,
+        status,
+        coachText
+      };
     }
 
-    function tomorrowForecast(todayScore, todayType, weekInfo) {
+    function tomorrowForecast(todayScore, todayType, weekInfo, recovery) {
       if (todayType === "red") {
         return {
           title: "🔮 Morgenintentie: mogelijk beter",
@@ -345,44 +371,37 @@
         };
       }
 
-      if (weekInfo.status === "Te eenvormig patroon") {
+      if (weekInfo.status === "Te eenvormig patroon" || weekInfo.status === "Stapelen") {
         return {
           title: "🔮 Morgenintentie: licht of herstel",
-          text: "Je week is te eenvormig. Morgen best opnieuw gecontroleerd blijven."
+          text: "Je week vraagt rem. Morgen best geen nieuwe stevige prikkel."
         };
       }
 
-      if (weekInfo.heavyDays >= 3 && todayScore >= 8) {
-        return {
-          title: "🔮 Morgenintentie: waarschijnlijk herstel",
-          text: "Je hebt al meerdere stevige dagen. Morgen best een duidelijke rem."
-        };
-      }
-
-      if (todayScore >= 9) {
+      if (todayScore >= 8 && recovery < 80) {
         return {
           title: "🔮 Morgenintentie: waarschijnlijk lichter",
-          text: "Vandaag is stevig. Morgen is best een vetverbrandingsdag light of een hersteldag."
+          text: "Vandaag was bruikbaar, maar niet topfris. Morgen beter light houden."
+        };
+      }
+
+      if (todayScore >= 9 && recovery >= 85) {
+        return {
+          title: "🔮 Morgenintentie: opnieuw trainbaar",
+          text: "Alleen als je vandaag beheerst blijft, kan morgen opnieuw een bruikbare dag zijn."
         };
       }
 
       if (todayScore >= 7) {
         return {
-          title: "🔮 Morgenintentie: opnieuw trainbaar",
-          text: "Morgen is waarschijnlijk opnieuw bruikbaar, zolang je vandaag niet uitbreidt."
-        };
-      }
-
-      if (todayScore >= 5) {
-        return {
           title: "🔮 Morgenintentie: check herstel",
-          text: "Morgen hangt sterk af van slaap en herstel van vannacht."
+          text: "Morgen hangt sterk af van slaap en hoe fris je opstaat."
         };
       }
 
       return {
         title: "🔮 Morgenintentie: rustig starten",
-        text: "Na een lichte of zwakke dag kan morgen beter aanvoelen, maar check opnieuw."
+        text: "Morgen opnieuw beoordelen op basis van herstel en gevoel."
       };
     }
 
@@ -429,6 +448,17 @@
         stappen = "7500–8500";
         hartslag = "95–102 bpm.";
         waarschuwing = "Te weinig variatie deze week. Geen krachttraining vandaag.";
+      } else if (weekInfo.consecutiveHeavy) {
+        type = "orange";
+        title = "🟠 REM NA STAPELING";
+        dagBesluit = "Vandaag geen derde zware prikkel.";
+        advies = weer === "regen"
+          ? "Gewone rustige wandeling of binnenwandeling."
+          : "Rustige tot matige wandeling, zonder extra tempo.";
+        duur = "30–40 min.";
+        stappen = "7500–9000";
+        hartslag = "95–105 bpm.";
+        waarschuwing = "Je hebt al zware dagen op rij. Vandaag niet nog eens doorduwen.";
       } else if (score <= 6 || recovery < 70) {
         type = "orange";
         title = "🟠 LICHTE DAG";
@@ -440,17 +470,17 @@
         stappen = "7500–8500";
         hartslag = "95–105 bpm.";
         waarschuwing = "Geen krachttraining. Niet uitbreiden.";
-      } else if (score <= 8 || recovery < 82) {
+      } else if ((score >= 7 && recovery < 85) || (score === 9 && recovery < 85)) {
         type = "yellow";
-        title = "🟡 VETVERBRANDING";
-        dagBesluit = "Vandaag is wandelen de beste keuze.";
+        title = "🟡 GECONTROLEERDE DAG";
+        dagBesluit = "Vandaag is goed, maar geen dubbele prikkel.";
         advies = weer === "regen"
           ? "Stevige gewone wandeling. Geen strand."
           : "Stevige strandwandeling in zone 2.";
         duur = moment === "all" ? "45–60 min." : "35–45 min.";
         stappen = "9000–10000";
         hartslag = "95–105 bpm, liever niet boven 110.";
-        waarschuwing = "Vandaag vetverbranding centraal. Liever wandelen dan zware HASfit.";
+        waarschuwing = "GEEN zware HASfit vandaag. Je recovery is niet hoog genoeg om te stapelen.";
       } else {
         type = "green";
         title = "🟢 STERKE DAG";
@@ -490,7 +520,7 @@
       }
 
       const score = calculateScore(bb, sleep, gevoel, lichaam);
-      const recovery = recoveryScore(bb, sleep, score);
+      const recovery = recoveryScore(bb, sleep, score, gevoel, lichaam);
 
       const beforeData = getData();
       const beforeWeek = buildWeekAssessment(beforeData);
@@ -504,7 +534,7 @@
       });
 
       const weekInfo = buildWeekAssessment(updatedData);
-      const forecast = tomorrowForecast(score, advice.type, weekInfo);
+      const forecast = tomorrowForecast(score, advice.type, weekInfo, recovery);
       const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
 
       result.classList.add(advice.type);
@@ -521,13 +551,14 @@
         <div class="line"><strong>Weekstatus:</strong> ${weekInfo.status}</div>
         <div class="line"><strong>Weekcoach:</strong> ${weekInfo.coachText}</div>
         <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
+        <div class="line"><strong>Gemiddelde recovery:</strong> ${weekInfo.avgRecovery.toFixed(0)}/100</div>
         <div class="line"><strong>Monotony:</strong> ${monoText}</div>
         <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
         <div class="warn">${advice.waarschuwing}</div>
 
         <div class="section">
           <div class="section-title">${forecast.title}</div>
-          <div class="small">${forecast.text}</div>
+          <div>${forecast.text}</div>
         </div>
       `;
     }
@@ -556,6 +587,7 @@
         <div class="box">Totale weekload: ${totalLoad}</div>
         <div class="line"><strong>Dagen bewaard:</strong> ${weekInfo.days}</div>
         <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
+        <div class="line"><strong>Gemiddelde recovery:</strong> ${weekInfo.avgRecovery.toFixed(0)}/100</div>
         <div class="line"><strong>Monotony:</strong> ${monoText}</div>
         <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
         <div class="line"><strong>Zware dagen:</strong> ${weekInfo.heavyDays}</div>
