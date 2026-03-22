@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Weekcoach V2 Intelligent</title>
+  <title>Weekcoach V3</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -22,7 +22,7 @@
       --orange: #ffedd5;
       --red: #fee2e2;
       --dark: #111111;
-      --secondary: #6b7280;
+      --secondary: #7a8090;
     }
 
     * {
@@ -172,8 +172,8 @@
 </head>
 <body>
   <div class="app">
-    <h1>Weekcoach V2 🔥</h1>
-    <p class="sub">Intelligente coach voor vetverbranding, herstel, weektrend en morgenadvies.</p>
+    <h1>Weekcoach V3 🔥</h1>
+    <p class="sub">Coach voor vetverbranding, herstel, weektrend en morgenadvies.</p>
 
     <div class="panel">
       <input id="bb" type="number" inputmode="numeric" placeholder="Body Battery (bv 75)">
@@ -217,7 +217,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "weekcoach_v2_intelligent";
+    const STORAGE_KEY = "weekcoach_v3";
 
     function average(arr) {
       if (!arr.length) return 0;
@@ -227,7 +227,7 @@
     function stddev(arr) {
       if (arr.length < 2) return 0;
       const avg = average(arr);
-      const variance = average(arr.map(x => Math.pow(x - avg, 2)));
+      const variance = average(arr.map(x => (x - avg) ** 2));
       return Math.sqrt(variance);
     }
 
@@ -237,6 +237,15 @@
       const sd = stddev(arr);
       if (sd === 0) return null;
       return avg / sd;
+    }
+
+    function trendText(arr) {
+      if (arr.length < 2) return "onvoldoende data";
+      const last = arr[arr.length - 1];
+      const prev = arr[arr.length - 2];
+      if (last > prev) return "⬆️ stijgend";
+      if (last < prev) return "⬇️ dalend";
+      return "➖ stabiel";
     }
 
     function todayKey() {
@@ -258,13 +267,10 @@
     function saveTodayLoad(load) {
       const key = todayKey();
       let week = getWeekData();
-
       week = week.filter(item => item.date !== key);
       week.push({ date: key, load });
-
       week.sort((a, b) => a.date.localeCompare(b.date));
       if (week.length > 7) week = week.slice(-7);
-
       saveWeekData(week);
       return week;
     }
@@ -296,10 +302,16 @@
       return score;
     }
 
+    function recoveryScore(bb, sleep, score) {
+      const value = Math.round((bb * 0.4) + (sleep * 0.4) + (score * 2));
+      return Math.max(0, Math.min(100, value));
+    }
+
     function buildWeekAssessment(loads) {
       const days = loads.length;
       const avg = average(loads);
       const mono = calcMonotony(loads);
+      const trend = trendText(loads);
 
       let status = "";
       let coachText = "";
@@ -309,7 +321,7 @@
         coachText = "Nog te weinig weekdata om een echte trend te beoordelen. Blijf gecontroleerd.";
       } else if (mono !== null && mono > 2.0) {
         status = "Te eenvormig patroon";
-        coachText = "Je belasting lijkt te weinig gevarieerd. Dat verhoogt het risico op overbelasting.";
+        coachText = "Je belasting is te weinig gevarieerd. Dat verhoogt het risico op overbelasting.";
       } else if (avg >= 6.5) {
         status = "Sterk maar controle houden";
         coachText = "Je week ligt hoog. Trainen kan, maar stapelen van zware dagen is niet slim.";
@@ -321,13 +333,7 @@
         coachText = "Je weekbelasting is voorlopig eerder licht.";
       }
 
-      return {
-        days,
-        avg,
-        mono,
-        status,
-        coachText
-      };
+      return { days, avg, mono, trend, status, coachText };
     }
 
     function tomorrowForecast(todayScore, todayColor, weekInfo) {
@@ -393,6 +399,7 @@
       }
 
       const score = calculateScore(bb, sleep, gevoel, lichaam);
+      const recovery = recoveryScore(bb, sleep, score);
 
       const beforeWeek = getWeekData();
       const beforeLoads = beforeWeek.map(x => x.load);
@@ -418,9 +425,7 @@
         hartslag = "Liefst onder zone 2.";
         waarschuwing = "Niet uitbreiden. Geen HASfit.";
         kleur = "red";
-      }
-
-      else if (beforeAssessment.days >= 4 && beforeAssessment.avg >= 6.8) {
+      } else if (beforeAssessment.days >= 4 && beforeAssessment.avg >= 6.8) {
         titel = "🔴 WEEKREM";
         dagBesluit = "Vandaag bewust afremmen.";
         advies = weer === "regen"
@@ -431,9 +436,7 @@
         hartslag = "Laag en rustig.";
         waarschuwing = "Je weekbelasting is te hoog om nog door te duwen.";
         kleur = "red";
-      }
-
-      else if (beforeAssessment.days >= 5 && beforeAssessment.mono !== null && beforeAssessment.mono > 2.0) {
+      } else if (beforeAssessment.days >= 5 && beforeAssessment.mono !== null && beforeAssessment.mono > 2.0) {
         titel = "🟠 AFREMDAG";
         dagBesluit = "Vandaag lichter houden.";
         advies = weer === "regen"
@@ -444,9 +447,7 @@
         hartslag = "95–102 bpm.";
         waarschuwing = "Te weinig variatie deze week. Geen krachttraining vandaag.";
         kleur = "orange";
-      }
-
-      else if (score <= 6) {
+      } else if (score <= 6) {
         titel = "🟠 LICHTE DAG";
         dagBesluit = "Vandaag bewegen, niet pushen.";
         advies = weer === "regen"
@@ -457,9 +458,7 @@
         hartslag = "95–105 bpm.";
         waarschuwing = "Geen krachttraining. Niet uitbreiden.";
         kleur = "orange";
-      }
-
-      else if (score <= 8) {
+      } else if (score <= 8) {
         titel = "🟡 VETVERBRANDING";
         dagBesluit = "Vandaag is wandelen de beste keuze.";
         advies = weer === "regen"
@@ -470,9 +469,7 @@
         hartslag = "95–105 bpm, liever niet boven 110.";
         waarschuwing = "Vandaag vetverbranding centraal. Liever wandelen dan zware HASfit.";
         kleur = "yellow";
-      }
-
-      else {
+      } else {
         titel = "🟢 STERKE DAG";
         dagBesluit = "Vandaag kan je combineren, maar beheerst.";
         advies = weer === "regen"
@@ -481,7 +478,9 @@
         duur = possible === "evening" ? "35–45 min wandelen + eventueel heel korte kracht." : "45–60 min wandelen + korte kracht.";
         stappen = "10000+";
         hartslag = "Wandelen in zone 2, kracht kort en beheerst.";
-        waarschuwing = "Goede dag, maar nog altijd: niet onnodig uitbreiden.";
+        waarschuwing = beforeAssessment.avg > 7 && score > 8
+          ? "Vandaag voelt sterk, maar je zit al hoog deze week. Dit is waar mensen overdrijven."
+          : "Goede dag, maar nog altijd: niet onnodig uitbreiden.";
         kleur = "green";
       }
 
@@ -496,6 +495,7 @@
       result.innerHTML = `
         <div class="title">${titel}</div>
         <div class="box">Trainingsscore vandaag: ${score}/10</div>
+        <div class="box">Recovery vandaag: ${recovery}/100</div>
         <div class="box">Stappendoel: ${stappen} stappen</div>
         <div class="line"><strong>Dagbesluit:</strong> ${dagBesluit}</div>
         <div class="line"><strong>Vandaag:</strong> ${advies}</div>
@@ -506,6 +506,7 @@
         <div class="line"><strong>Weekcoach:</strong> ${weekInfo.coachText}</div>
         <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
         <div class="line"><strong>Monotony:</strong> ${monoText}</div>
+        <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
         <div class="warn">${waarschuwing}</div>
 
         <div class="forecast">
@@ -541,6 +542,7 @@
         <div class="line"><strong>Dagen bewaard:</strong> ${weekInfo.days}</div>
         <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
         <div class="line"><strong>Monotony:</strong> ${monoText}</div>
+        <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
         <div class="line"><strong>Status:</strong> ${weekInfo.status}</div>
         <div class="warn">${weekInfo.coachText}</div>
       `;
