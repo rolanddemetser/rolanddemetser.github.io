@@ -1,1086 +1,180 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#f3f4f6">
-  <title>Weekcoach V7</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekcoach V7 Strak</title>
 
-  <style>
-    :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #111111;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --chip: #eef0f3;
-      --chip-active: #111111;
-      --chip-active-text: #ffffff;
-      --good: #dff7e6;
-      --warn: #fff1cc;
-      --bad: #ffe0e0;
-      --blue: #e7f0ff;
-      --purple: #efe6ff;
-      --shadow: 0 8px 22px rgba(0,0,0,0.06);
-      --radius: 20px;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .wrap {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px 16px 34px;
-    }
-
-    .hero {
-      margin: 4px 0 18px;
-    }
-
-    .hero h1 {
-      margin: 0 0 6px;
-      font-size: 46px;
-      line-height: 1.02;
-      font-weight: 850;
-      letter-spacing: -1px;
-    }
-
-    .hero p {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.35;
-      color: var(--muted);
-      font-weight: 650;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      margin: 0 0 14px;
-      font-size: 20px;
-      font-weight: 850;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 740px) {
-      .grid.two {
-        grid-template-columns: 1fr 1fr;
-      }
-      .grid.three {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-    }
-
-    label {
-      display: block;
-      font-size: 17px;
-      font-weight: 780;
-      margin: 0 0 8px;
-    }
-
-    input[type="number"], select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px 16px;
-      font-size: 18px;
-      background: #fff;
-      color: var(--text);
-      appearance: none;
-      -webkit-appearance: none;
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      border: 0;
-      border-radius: 999px;
-      padding: 13px 16px;
-      background: var(--chip);
-      color: var(--text);
-      font-size: 17px;
-      font-weight: 820;
-      cursor: pointer;
-    }
-
-    .chip.active {
-      background: var(--chip-active);
-      color: var(--chip-active-text);
-    }
-
-    .btn {
-      width: 100%;
-      border: 0;
-      border-radius: 18px;
-      padding: 18px 18px;
-      font-size: 22px;
-      font-weight: 850;
-      background: #111111;
-      color: white;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-
-    .btn.secondary {
-      background: #dfe3e8;
-      color: #111111;
-      margin-top: 12px;
-    }
-
-    .top-metrics {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    @media (min-width: 740px) {
-      .top-metrics {
-        grid-template-columns: repeat(5, 1fr);
-      }
-    }
-
-    .metric {
-      border-radius: 18px;
-      padding: 14px;
-      background: #f8f9fb;
-      border: 1px solid var(--line);
-    }
-
-    .metric .k {
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .metric .v {
-      font-size: 28px;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .band {
-      border-radius: 18px;
-      padding: 14px 16px;
-      margin: 10px 0 0;
-      font-size: 17px;
-      line-height: 1.45;
-      font-weight: 760;
-    }
-
-    .band.good { background: var(--good); }
-    .band.warn { background: var(--warn); }
-    .band.bad { background: var(--bad); }
-    .band.blue { background: var(--blue); }
-    .band.purple { background: var(--purple); }
-
-    .result-block {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-      margin-top: 12px;
-      background: #fff;
-    }
-
-    .result-block h3 {
-      margin: 0 0 10px;
-      font-size: 22px;
-      line-height: 1.2;
-    }
-
-    .result-block p {
-      margin: 0 0 8px;
-      font-size: 18px;
-      line-height: 1.45;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 650;
-    }
-
-    .list {
-      margin: 8px 0 0;
-      padding-left: 20px;
-    }
-
-    .list li {
-      margin: 8px 0;
-      font-size: 17px;
-      line-height: 1.45;
-    }
-
-    .empty {
-      font-size: 20px;
-      font-weight: 720;
-      color: var(--muted);
-      padding: 8px 2px;
-    }
-
-    .divider {
-      height: 1px;
-      background: var(--line);
-      margin: 16px 0;
-    }
-
-    .footer-note {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 650;
-    }
-
-    .tight p { margin-bottom: 6px; }
-  </style>
+<style>
+body {font-family:-apple-system;background:#f2f2f7;margin:0;}
+.wrap {padding:16px;}
+.card {background:white;border-radius:14px;padding:16px;margin-bottom:16px;}
+h1 {font-size:32px;}
+input,select {width:100%;padding:12px;margin:6px 0 12px;border-radius:10px;border:1px solid #ccc;}
+button {width:100%;padding:16px;background:black;color:white;border:none;border-radius:12px;font-size:18px;}
+.chips {display:flex;flex-wrap:wrap;gap:8px;}
+.chip {padding:10px 14px;background:#eee;border-radius:20px;cursor:pointer;}
+.chip.active {background:black;color:white;}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-
-    <div class="hero">
-      <h1>🔥 Weekcoach V7</h1>
-      <p>Strenge coach voor training, herstel, variatie, stappen en timing.</p>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">Vandaag invullen</h2>
-
-      <div class="grid two">
-        <div>
-          <label for="bb">Body Battery</label>
-          <input id="bb" type="number" min="0" max="100" value="63">
-        </div>
-
-        <div>
-          <label for="sleep">Slaapscore</label>
-          <input id="sleep" type="number" min="0" max="100" value="69">
-        </div>
-
-        <div>
-          <label for="hrv">HRV (RMSSD)</label>
-          <input id="hrv" type="number" min="0" max="120" value="53">
-        </div>
-
-        <div>
-          <label for="stress">Stress</label>
-          <input id="stress" type="number" min="0" max="100" value="20">
-        </div>
-
-        <div>
-          <label for="recovery">Recovery</label>
-          <input id="recovery" type="number" min="0" max="100" value="58">
-        </div>
-
-        <div>
-          <label for="mono">Monotony</label>
-          <input id="mono" type="number" min="0" max="10" step="0.1" value="6.4">
-        </div>
-
-        <div>
-          <label for="gevoel">Gevoel</label>
-          <select id="gevoel">
-            <option value="slecht">Slecht</option>
-            <option value="ok" selected>OK</option>
-            <option value="goed">Goed</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="lichaam">Lichaam</label>
-          <select id="lichaam">
-            <option value="moe">Moe</option>
-            <option value="stijf">Stijf</option>
-            <option value="fris" selected>Fris</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="weer">Weer</label>
-          <select id="weer">
-            <option value="slecht">Slecht</option>
-            <option value="ok" selected>OK</option>
-            <option value="goed">Goed</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="darmen">Darmen</label>
-          <select id="darmen">
-            <option value="goed" selected>Goed</option>
-            <option value="traag">Traag</option>
-            <option value="slecht">Slecht</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="trend">Weektrend</label>
-          <select id="trend">
-            <option value="dalend" selected>Dalend</option>
-            <option value="stabiel">Stabiel</option>
-            <option value="stijgend">Stijgend</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="focus">Voorkeur vandaag</label>
-          <select id="focus">
-            <option value="auto" selected>Automatisch</option>
-            <option value="vetverbranding">Vetverbranding</option>
-            <option value="herstel">Herstel</option>
-            <option value="kracht">Kracht</option>
-            <option value="darmen">Darmactivatie</option>
-            <option value="variatie">Variatie</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="gisteren">Wat deed je gisteren?</label>
-          <select id="gisteren">
-            <option value="geen">Geen training</option>
-            <option value="wandelen" selected>Wandelen</option>
-            <option value="kracht">Krachttraining</option>
-            <option value="yoga">Yoga / mobiliteit</option>
-            <option value="interval">Interval / stevig</option>
-            <option value="mix">Mix</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="eergisteren">Wat deed je eergisteren?</label>
-          <select id="eergisteren">
-            <option value="geen">Geen training</option>
-            <option value="wandelen" selected>Wandelen</option>
-            <option value="kracht">Krachttraining</option>
-            <option value="yoga">Yoga / mobiliteit</option>
-            <option value="interval">Interval / stevig</option>
-            <option value="mix">Mix</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <label>Mogelijke trainingsmomenten</label>
-      <div class="chips">
-        <button class="chip active" type="button" data-group="moment" data-value="ochtend">Ochtend</button>
-        <button class="chip active" type="button" data-group="moment" data-value="middag">Middag</button>
-        <button class="chip active" type="button" data-group="moment" data-value="avond">Avond</button>
-      </div>
-
-      <div style="height:14px"></div>
-
-      <label>Mogelijke duurtijden</label>
-      <div class="chips">
-        <button class="chip active" type="button" data-group="duur" data-value="20">20 min</button>
-        <button class="chip active" type="button" data-group="duur" data-value="30">30 min</button>
-        <button class="chip active" type="button" data-group="duur" data-value="45">45 min</button>
-        <button class="chip" type="button" data-group="duur" data-value="60">60 min</button>
-      </div>
-
-      <button class="btn" onclick="bereken()">Wat vandaag?</button>
-      <button class="btn secondary" onclick="resetForm()">Reset</button>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">Resultaat</h2>
-      <div id="output" class="empty">Nog niets berekend.</div>
-    </div>
-
-  </div>
-
-  <script>
-    document.querySelectorAll('.chip').forEach(btn => {
-      btn.addEventListener('click', function () {
-        this.classList.toggle('active');
-      });
-    });
-
-    function num(id) {
-      return Number(document.getElementById(id).value);
-    }
-
-    function val(id) {
-      return document.getElementById(id).value;
-    }
-
-    function getSelected(group) {
-      return Array.from(document.querySelectorAll('.chip.active'))
-        .filter(btn => btn.dataset.group === group)
-        .map(btn => btn.dataset.value);
-    }
-
-    function clamp(x, min, max) {
-      return Math.max(min, Math.min(max, x));
-    }
-
-    function scoreTo10(x) {
-      return clamp(Math.round(x / 10), 1, 10);
-    }
-
-    function gevoelScore(v) {
-      if (v === 'slecht') return 30;
-      if (v === 'ok') return 60;
-      return 85;
-    }
-
-    function lichaamScore(v) {
-      if (v === 'moe') return 35;
-      if (v === 'stijf') return 55;
-      return 80;
-    }
-
-    function weerMod(v) {
-      if (v === 'slecht') return -4;
-      if (v === 'ok') return 0;
-      return 2;
-    }
-
-    function darmenMod(v) {
-      if (v === 'slecht') return -7;
-      if (v === 'traag') return -3;
-      return 1;
-    }
-
-    function trendMod(v) {
-      if (v === 'dalend') return -5;
-      if (v === 'stabiel') return 0;
-      return 3;
-    }
-
-    function hrvScore(hrv) {
-      if (hrv >= 70) return 88;
-      if (hrv >= 60) return 78;
-      if (hrv >= 50) return 68;
-      if (hrv >= 40) return 56;
-      return 42;
-    }
-
-    function sleepPenalty(sleep) {
-      if (sleep < 45) return 14;
-      if (sleep < 55) return 10;
-      if (sleep < 65) return 5;
-      return 0;
-    }
-
-    function monotonyPenalty(mono) {
-      if (mono >= 7) return 16;
-      if (mono >= 6.5) return 12;
-      if (mono >= 6) return 9;
-      if (mono >= 5) return 4;
-      return 0;
-    }
-
-    function stressPenalty(stress) {
-      if (stress >= 45) return 12;
-      if (stress >= 35) return 8;
-      if (stress >= 25) return 4;
-      return 0;
-    }
-
-    function recoveryPenalty(rec) {
-      if (rec < 45) return 16;
-      if (rec < 55) return 10;
-      if (rec < 65) return 5;
-      return 0;
-    }
-
-    function samenPatternPenalty(gisteren, eergisteren, focus) {
-      let p = 0;
-      if (gisteren === 'wandelen' && eergisteren === 'wandelen') p += 6;
-      if (gisteren === 'kracht' && eergisteren === 'kracht') p += 5;
-      if (focus === 'variatie') p -= 2;
-      return p;
-    }
-
-    function readinessBand(score) {
-      if (score >= 78) return 'good';
-      if (score >= 62) return 'warn';
-      return 'bad';
-    }
-
-    function formatMoment(m) {
-      if (m === 'ochtend') return 'Ochtend';
-      if (m === 'middag') return 'Middag';
-      return 'Avond';
-    }
-
-    function focusText(focus) {
-      if (focus === 'vetverbranding') return 'Vetverbranding';
-      if (focus === 'herstel') return 'Herstel';
-      if (focus === 'kracht') return 'Kracht';
-      if (focus === 'darmen') return 'Darmactivatie';
-      if (focus === 'variatie') return 'Variatie';
-      return 'Automatisch';
-    }
-
-    function chooseMainFocus(preferred, dayType, darmen, mono, gisteren, eergisteren) {
-      if (preferred !== 'auto') return preferred;
-      if (darmen === 'traag' || darmen === 'slecht') return 'darmen';
-      if (mono >= 5.5 || (gisteren === 'wandelen' && eergisteren === 'wandelen')) return 'variatie';
-      if (dayType === 'hersteldag' || dayType === 'actief herstel') return 'herstel';
-      if (dayType === 'opbouwdag') return 'vetverbranding';
-      return 'kracht';
-    }
-
-    function strictStop(rec, gevoel, lichaam, sleep, stress, mono, hrv) {
-      if (rec < 40) return true;
-      if (gevoel === 'slecht' && lichaam === 'moe') return true;
-      if (sleep < 45 && stress > 30) return true;
-      if (mono >= 7 && rec < 55) return true;
-      if (hrv < 38 && rec < 60) return true;
-      return false;
-    }
-
-    function getDayType(readiness, recovery, mono, stress, sleep, gevoel, lichaam, hrv) {
-      if (strictStop(recovery, gevoel, lichaam, sleep, stress, mono, hrv)) {
-        return 'stopdag';
-      }
-
-      if (readiness < 52) return 'hersteldag';
-      if (readiness < 68) return 'actief herstel';
-      if (readiness < 80) return 'opbouwdag';
-      return 'sterke trainingsdag';
-    }
-
-    function getStepGoal(dayType, darmen, mono) {
-      let from = 4500;
-      let to = 6500;
-
-      if (dayType === 'hersteldag') {
-        from = 5000; to = 7000;
-      }
-      if (dayType === 'actief herstel') {
-        from = 6500; to = 8500;
-      }
-      if (dayType === 'opbouwdag') {
-        from = 8000; to = 10000;
-      }
-      if (dayType === 'sterke trainingsdag') {
-        from = 9000; to = 11000;
-      }
-
-      if (darmen === 'traag') {
-        from += 500; to += 500;
-      }
-      if (darmen === 'slecht') {
-        from = Math.max(4000, from - 1000);
-        to = Math.max(5500, to - 1000);
-      }
-      if (mono >= 6.5) {
-        to = Math.max(from + 500, to - 1000);
-      }
-
-      return `${from}–${to} stappen`;
-    }
-
-    function getLocks(mono, recovery, sleep, stress, lichaam, trend, gisteren, eergisteren, dayType) {
-      const locks = [];
-      let hardBlocked = false;
-
-      if (dayType === 'stopdag') {
-        locks.push('Vandaag train je niet. Geen compromis, geen “maar misschien toch”.');
-        hardBlocked = true;
-      }
-      if (mono >= 6) {
-        locks.push('Monotony is hoog: vandaag niet doorduwen.');
-        hardBlocked = true;
-      }
-      if (mono >= 6.5) {
-        locks.push('Je weekpatroon is te eenvormig. Meer van hetzelfde is vandaag fout.');
-        hardBlocked = true;
-      }
-      if (recovery < 60) {
-        locks.push('Recovery is te laag voor een zware prikkel.');
-        hardBlocked = true;
-      }
-      if (sleep < 60) {
-        locks.push('Slaap was te zwak om zwaar te trainen.');
-        hardBlocked = true;
-      }
-      if (stress > 35) {
-        locks.push('Stress ligt te hoog voor intensieve training.');
-        hardBlocked = true;
-      }
-      if (lichaam === 'moe') {
-        locks.push('Je lichaam voelt moe. Vandaag telt doseren meer dan ambitie.');
-        hardBlocked = true;
-      }
-      if (trend === 'dalend') {
-        locks.push('Weektrend daalt: vandaag slim blijven, niet compenseren.');
-      }
-      if (gisteren === 'wandelen' && eergisteren === 'wandelen') {
-        locks.push('Je deed al twee dagen wandelen. Kies vandaag liefst niet opnieuw exact hetzelfde.');
-      }
-
-      return { locks, hardBlocked };
-    }
-
-    function comboScore(dayType, moment, duur, focus, hardBlocked, weer, darmen) {
-      duur = Number(duur);
-      let score = 0;
-
-      if (dayType === 'stopdag') {
-        score += { ochtend: 6, middag: 4, avond: 8 }[moment] || 0;
-        score += { 20: 10, 30: 6, 45: 1, 60: 0 }[duur] || 0;
-      }
-
-      if (dayType === 'hersteldag') {
-        score += { ochtend: 7, middag: 6, avond: 9 }[moment] || 0;
-        score += { 20: 9, 30: 8, 45: 4, 60: 1 }[duur] || 0;
-      }
-
-      if (dayType === 'actief herstel') {
-        score += { ochtend: 9, middag: 9, avond: 7 }[moment] || 0;
-        score += { 20: 7, 30: 10, 45: 8, 60: 4 }[duur] || 0;
-      }
-
-      if (dayType === 'opbouwdag') {
-        score += { ochtend: 8, middag: 10, avond: 5 }[moment] || 0;
-        score += { 20: 4, 30: 7, 45: 10, 60: 8 }[duur] || 0;
-      }
-
-      if (dayType === 'sterke trainingsdag') {
-        score += { ochtend: 7, middag: 10, avond: 4 }[moment] || 0;
-        score += { 20: 2, 30: 5, 45: 9, 60: 10 }[duur] || 0;
-      }
-
-      if (hardBlocked && (dayType === 'opbouwdag' || dayType === 'sterke trainingsdag')) {
-        if (duur >= 45) score -= 4;
-        if (duur >= 60) score -= 4;
-      }
-
-      if (focus === 'herstel') {
-        if (moment === 'avond') score += 2;
-        if (duur === 20 || duur === 30) score += 2;
-      }
-
-      if (focus === 'darmen') {
-        if (moment === 'ochtend' || moment === 'middag') score += 3;
-        if (duur === 30 || duur === 45) score += 2;
-      }
-
-      if (focus === 'kracht') {
-        if (moment === 'middag') score += 3;
-        if (duur === 45 || duur === 60) score += 3;
-      }
-
-      if (focus === 'variatie') {
-        if (moment === 'middag' || moment === 'ochtend') score += 2;
-        if (duur === 20 || duur === 30 || duur === 45) score += 1;
-      }
-
-      if (weer === 'slecht' && moment === 'middag') score -= 1;
-      if (darmen === 'slecht' && duur >= 45) score -= 2;
-
-      return score;
-    }
-
-    function buildAdvice(dayType, moment, duur, focus, hardBlocked, darmen, mono, gisteren, eergisteren) {
-      duur = Number(duur);
-
-      let titel = '';
-      let training = '';
-      let intensiteit = '';
-      let doel = '';
-      let extra = '';
-      let nietDoen = '';
-
-      if (dayType === 'stopdag') {
-        titel = 'Volledige rem erop';
-        training = duur <= 20
-          ? `${duur} min zeer rustig wandelen of helemaal rusten.`
-          : `Maak er géén echte training van. Hou het bij maximaal 15–20 min loswandelen.`;
-        intensiteit = 'Zeer laag';
-        doel = 'Systeem kalmeren en schade beperken.';
-        extra = 'Vandaag geldt discipline: geen kracht, geen interval, geen “ik probeer toch iets”.';
-        nietDoen = 'Niet trainen, niet compenseren, niet forceren.';
-      }
-
-      if (dayType === 'hersteldag') {
-        titel = 'Herstellen, niet stoer doen';
-        if (moment === 'avond') {
-          training = `${duur} min rustige yoga, mobiliteit of ademhaling.`;
-        } else {
-          training = `${duur} min zeer rustige wandeling of kalme mobiliteit.`;
-        }
-        intensiteit = 'Zeer laag';
-        doel = 'Herstel, losmaken en zenuwstelsel laten zakken.';
-        extra = 'Vandaag is geen trainingsdag. Bewegen mag, belasten niet.';
-        nietDoen = 'Geen zware cardio, geen zware benen, geen interval.';
-      }
-
-      if (dayType === 'actief herstel') {
-        titel = 'Gecontroleerd bewegen';
-        if (focus === 'variatie') {
-          if (gisteren === 'wandelen' && eergisteren === 'wandelen') {
-            training = `${duur} min lichte krachttraining, yoga of mobiliteit. Niet opnieuw gewoon dezelfde wandeling.`;
-          } else {
-            training = `${duur} min afwisselend wandelen, mobiliteit of lichte core.`;
-          }
-        } else if (focus === 'darmen') {
-          training = `${duur} min rustige wandeling met vlotte cadans, liefst overdag. Voeg eventueel 5–10 min rotatie- of heupmobiliteit toe.`;
-        } else if (moment === 'avond') {
-          training = `${duur} min rustige yoga of korte wandeling na het eten.`;
-        } else {
-          training = `${duur} min rustige wandeling in lage zone 2.`;
-        }
-        intensiteit = 'Laag tot laag-matig';
-        doel = 'Herstel ondersteunen zonder extra vermoeidheid.';
-        extra = 'Je mag bewegen, maar je verdient vandaag geen zware prikkel.';
-        if (mono >= 5.5) extra += ' Variatie is belangrijker dan volume.';
-        nietDoen = 'Geen slopende sessie en niet “per ongeluk” te snel gaan.';
-      }
-
-      if (dayType === 'opbouwdag') {
-        titel = 'Trainen mag, maar slim';
-        if (focus === 'kracht' && moment === 'middag' && duur >= 45 && !hardBlocked) {
-          training = `${duur} min lichte tot matige krachttraining, strak gecontroleerd en zonder falen.`;
-          doel = 'Spierprikkel zonder herstel te saboteren.';
-        } else if (focus === 'variatie') {
-          training = `${duur} min andere stimulus dan je laatste dagen: lichte kracht, core, mobiliteit of een andere wandelvorm.`;
-          doel = 'Variatie brengen en monotony afremmen.';
-        } else if (focus === 'darmen') {
-          training = `${duur} min vlotte wandeling overdag, eventueel opgesplitst in 2 blokken.`;
-          doel = 'Darmactivatie en lichte vetverbranding.';
-        } else if (moment === 'middag' && duur >= 45 && !hardBlocked) {
-          training = `${duur} min stevige zone 2 wandeling, eventueel met 3 x 2 min iets sneller.`;
-          doel = 'Conditie en vetverbranding opbouwen.';
-        } else if (moment === 'ochtend') {
-          training = `${duur} min zone 2 wandelen als hoofdtraining van de dag.`;
-          doel = 'Rustige, degelijke trainingsprikkel.';
-        } else {
-          training = `${duur} min rustige tot matige training. Avond = bewust gedempt.`;
-          doel = 'Kwaliteit pakken zonder te laat te pieken.';
-        }
-        intensiteit = 'Matig';
-        extra = hardBlocked
-          ? 'Je lichaam laat vandaag geen zware prikkel toe. Hou je daaraan.'
-          : 'Vandaag mag je iets doen, maar het moet controleerbaar blijven.';
-        nietDoen = 'Niet tot uitputting gaan, niet forceren omdat je “je goed voelt”.';
-      }
-
-      if (dayType === 'sterke trainingsdag') {
-        titel = 'Goede dag, maar niet dom worden';
-        if (focus === 'kracht' && moment === 'middag' && duur >= 45 && !hardBlocked) {
-          training = `${duur} min matige krachttraining met duidelijke werksets, maar nog altijd zonder totale uitputting.`;
-          doel = 'Kracht en fitheid opbouwen.';
-        } else if (focus === 'variatie') {
-          training = `${duur} min andere stimulus dan gewoon wandelen: kracht, intervalblokken of mix.`;
-          doel = 'Sterke dag benutten zonder in sleur te blijven.';
-        } else if (moment === 'middag' && duur >= 45 && !hardBlocked) {
-          training = `${duur} min stevige zone 2 of Japans wandelen in blokken, gecontroleerd.`;
-          doel = 'Conditie en vetverbranding combineren.';
-        } else if (moment === 'ochtend') {
-          training = `${duur} min stevige zone 2 als hoofdtraining.`;
-          doel = 'Goede trainingsprikkel op een degelijk moment.';
-        } else {
-          training = `${duur} min matige training. Avond blijft toch iets rustiger.`;
-          doel = 'Goede dag benutten zonder je slaap op te offeren.';
-        }
-        intensiteit = 'Matig tot stevig';
-        extra = hardBlocked
-          ? 'Je data remmen je nog af. Dus ook op een goede dag niet overmoedig worden.'
-          : 'Je mag vandaag pushen, maar gecontroleerd.';
-        nietDoen = 'Geen zinloze uitputtingsdrang en geen twee zware prikkels op één dag.';
-      }
-
-      return { titel, training, intensiteit, doel, extra, nietDoen };
-    }
-
-    function computeMorningIntent(dayType, recovery, mono, sleep, stress) {
-      if (dayType === 'stopdag') return 'Morgenochtend waarschijnlijk nog voorzichtig.';
-      if (recovery < 55 || mono >= 6.5 || sleep < 60) return 'Morgen kan beter zijn als je vandaag niet overdrijft.';
-      if (dayType === 'actief herstel') return 'Morgen mogelijk stabieler als je vandaag slim doseert.';
-      if (dayType === 'opbouwdag') return 'Morgen normaal goed, tenzij je vandaag toch te ver gaat.';
-      if (dayType === 'sterke trainingsdag' && stress < 25) return 'Morgenkans blijft goed als je vandaag gecontroleerd blijft.';
-      return 'Morgensignaal neutraal.';
-    }
-
-    function explain(readiness, bb, sleep, hrv, stress, recovery, mono, gevoel, lichaam) {
-      const parts = [];
-
-      if (sleep < 60) parts.push('slaap remt je af');
-      else if (sleep >= 70) parts.push('slaap helpt mee');
-
-      if (hrv >= 50) parts.push('HRV is bruikbaar');
-      else if (hrv < 40) parts.push('HRV is te laag');
-
-      if (stress <= 20) parts.push('stress ligt mooi laag');
-      else if (stress > 35) parts.push('stress trekt je score omlaag');
-
-      if (recovery < 60) parts.push('recovery is nog te matig');
-      else if (recovery >= 70) parts.push('recovery ondersteunt training');
-
-      if (mono >= 6) parts.push('monotony is een rode vlag');
-      else if (mono >= 5) parts.push('monotony vraagt aandacht');
-
-      if (gevoel === 'goed') parts.push('je gevoel helpt');
-      if (lichaam === 'moe') parts.push('je lichaam remt af');
-
-      return parts.join(', ') + '.';
-    }
-
-    function renderDayTypeText(dayType) {
-      if (dayType === 'stopdag') return '🔴 Stopdag';
-      if (dayType === 'hersteldag') return '🟠 Hersteldag';
-      if (dayType === 'actief herstel') return '🟢 Actief herstel';
-      if (dayType === 'opbouwdag') return '🟡 Opbouwdag';
-      return '🔵 Sterke trainingsdag';
-    }
-
-    function renderWeekStatus(mono, trend, gisteren, eergisteren) {
-      if (mono >= 6.5) {
-        return 'Te eenvormig patroon. Vandaag moet je variëren of afremmen.';
-      }
-      if (mono >= 5.5) {
-        return 'Monotony is te hoog om blind door te duwen.';
-      }
-      if (gisteren === eergisteren && gisteren !== 'geen') {
-        return 'Herhaling van dezelfde trainingsvorm loopt op. Variatie begint belangrijk te worden.';
-      }
-      if (trend === 'dalend') {
-        return 'Trend daalt. Slim doseren is vandaag belangrijker dan volume.';
-      }
-      return 'Weekstructuur is voorlopig aanvaardbaar.';
-    }
-
-    function bereken() {
-      const bb = clamp(num('bb'), 0, 100);
-      const sleep = clamp(num('sleep'), 0, 100);
-      const hrv = clamp(num('hrv'), 0, 120);
-      const stress = clamp(num('stress'), 0, 100);
-      const recovery = clamp(num('recovery'), 0, 100);
-      const mono = clamp(num('mono'), 0, 10);
-
-      const gevoel = val('gevoel');
-      const lichaam = val('lichaam');
-      const weer = val('weer');
-      const darmen = val('darmen');
-      const trend = val('trend');
-      const preferredFocus = val('focus');
-      const gisteren = val('gisteren');
-      const eergisteren = val('eergisteren');
-
-      let moments = getSelected('moment');
-      let duurs = getSelected('duur').map(Number).sort((a,b) => a-b);
-
-      if (moments.length === 0) moments = ['ochtend', 'middag', 'avond'];
-      if (duurs.length === 0) duurs = [20, 30];
-
-      let readiness =
-        (bb * 0.18) +
-        (sleep * 0.16) +
-        (hrvScore(hrv) * 0.14) +
-        ((100 - stress) * 0.12) +
-        (recovery * 0.22) +
-        (gevoelScore(gevoel) * 0.08) +
-        (lichaamScore(lichaam) * 0.06) +
-        weerMod(weer) +
-        darmenMod(darmen) +
-        trendMod(trend);
-
-      readiness -= sleepPenalty(sleep);
-      readiness -= monotonyPenalty(mono);
-      readiness -= stressPenalty(stress);
-      readiness -= recoveryPenalty(recovery);
-      readiness -= samenPatternPenalty(gisteren, eergisteren, preferredFocus);
-
-      readiness = Math.round(clamp(readiness, 0, 100));
-
-      const dayType = getDayType(readiness, recovery, mono, stress, sleep, gevoel, lichaam, hrv);
-      const mainFocus = chooseMainFocus(preferredFocus, dayType, darmen, mono, gisteren, eergisteren);
-      const stepGoal = getStepGoal(dayType, darmen, mono);
-      const locksObj = getLocks(mono, recovery, sleep, stress, lichaam, trend, gisteren, eergisteren, dayType);
-      const weekStatus = renderWeekStatus(mono, trend, gisteren, eergisteren);
-      const morningIntent = computeMorningIntent(dayType, recovery, mono, sleep, stress);
-
-      const combos = [];
-      moments.forEach(moment => {
-        duurs.forEach(duur => {
-          const score = comboScore(dayType, moment, duur, mainFocus, locksObj.hardBlocked, weer, darmen);
-          const advice = buildAdvice(dayType, moment, duur, mainFocus, locksObj.hardBlocked, darmen, mono, gisteren, eergisteren);
-          combos.push({ moment, duur, score, ...advice });
-        });
-      });
-
-      combos.sort((a, b) => b.score - a.score);
-
-      const best = combos[0];
-      const alternatives = combos.slice(1, 4);
-
-      let trainingScore = readiness;
-
-      if (dayType === 'stopdag') trainingScore -= 20;
-      if (dayType === 'hersteldag') trainingScore -= 10;
-      if (locksObj.hardBlocked) trainingScore -= 6;
-      if (mono >= 6.5) trainingScore -= 6;
-      if (gisteren === 'wandelen' && eergisteren === 'wandelen' && mainFocus === 'variatie') trainingScore -= 2;
-
-      trainingScore = clamp(trainingScore, 0, 100);
-      const trainingScore10 = scoreTo10(trainingScore);
-
-      let strictCoach = '';
-      if (dayType === 'stopdag') {
-        strictCoach = 'Vandaag train je niet. Punt.';
-      } else if (dayType === 'hersteldag') {
-        strictCoach = 'Vandaag is geen trainingsdag. Bewegen mag, belasten niet.';
-      } else if (dayType === 'actief herstel') {
-        strictCoach = 'Je mag bewegen, maar niet doen alsof dit een topdag is.';
-      } else if (dayType === 'opbouwdag') {
-        strictCoach = 'Je mag trainen, maar alleen gecontroleerd.';
-      } else {
-        strictCoach = 'Groen licht, maar nog altijd zonder domme bravoure.';
-      }
-
-      const whyText = explain(readiness, bb, sleep, hrv, stress, recovery, mono, gevoel, lichaam);
-
-      let lockHtml = '';
-      if (locksObj.locks.length > 0) {
-        lockHtml = `
-          <div class="band bad">
-            <strong>Strenge waarschuwing</strong><br>
-            ${locksObj.locks.join('<br>')}
-          </div>
-        `;
-      }
-
-      let altHtml = '';
-      if (alternatives.length > 0) {
-        altHtml = alternatives.map(item => `
-          <div class="result-block tight">
-            <h3>${formatMoment(item.moment)} · ${item.duur} min</h3>
-            <p><strong>${item.titel}</strong></p>
-            <p>${item.training}</p>
-            <p><strong>Intensiteit:</strong> ${item.intensiteit}</p>
-            <p><strong>Doel:</strong> ${item.doel}</p>
-            <p><strong>Niet doen:</strong> ${item.nietDoen}</p>
-            ${item.extra ? `<p class="small">${item.extra}</p>` : ``}
-          </div>
-        `).join('');
-      }
-
-      document.getElementById('output').innerHTML = `
-        <div class="top-metrics">
-          <div class="metric">
-            <div class="k">Readiness</div>
-            <div class="v">${readiness}</div>
-          </div>
-          <div class="metric">
-            <div class="k">Trainingsscore</div>
-            <div class="v">${trainingScore10}/10</div>
-          </div>
-          <div class="metric">
-            <div class="k">Recovery</div>
-            <div class="v">${recovery}</div>
-          </div>
-          <div class="metric">
-            <div class="k">Stapdoel</div>
-            <div class="v" style="font-size:18px; line-height:1.15;">${stepGoal}</div>
-          </div>
-          <div class="metric">
-            <div class="k">Focus</div>
-            <div class="v" style="font-size:18px; line-height:1.15;">${focusText(mainFocus)}</div>
-          </div>
-        </div>
-
-        <div class="band ${readinessBand(readiness)}">
-          <strong>Dagtype:</strong> ${renderDayTypeText(dayType)}<br>
-          <strong>Coach:</strong> ${strictCoach}
-        </div>
-
-        <div class="band blue">
-          <strong>Waarom:</strong> ${whyText}
-        </div>
-
-        <div class="band purple">
-          <strong>Weekstatus:</strong> ${weekStatus}<br>
-          <strong>Morgenintentie:</strong> ${morningIntent}
-        </div>
-
-        ${lockHtml}
-
-        <div class="result-block">
-          <h3>Beste keuze vandaag: ${formatMoment(best.moment)} · ${best.duur} min</h3>
-          <p><strong>${best.titel}</strong></p>
-          <p>${best.training}</p>
-          <p><strong>Intensiteit:</strong> ${best.intensiteit}</p>
-          <p><strong>Doel:</strong> ${best.doel}</p>
-          <p><strong>Niet doen:</strong> ${best.nietDoen}</p>
-          ${best.extra ? `<p class="small">${best.extra}</p>` : ``}
-        </div>
-
-        <div class="result-block">
-          <h3>Andere opties die vandaag ook kunnen</h3>
-          ${altHtml || `<p>Geen extra opties berekend.</p>`}
-        </div>
-
-        <div class="result-block">
-          <h3>Praktisch besluit</h3>
-          <ul class="list">
-            <li><strong>Vandaag doen:</strong> ${best.training}</li>
-            <li><strong>Vandaag niet doen:</strong> ${best.nietDoen}</li>
-            <li><strong>Stappen:</strong> ${stepGoal}</li>
-            <li><strong>Timing:</strong> ${formatMoment(best.moment)} is vandaag je beste venster.</li>
-            <li><strong>Strikte regel:</strong> ${strictCoach}</li>
-          </ul>
-          <div class="footer-note">
-            Deze coach kiest bewust voor herstelbehoud, variatie en discipline. Een goede zin om te trainen is nooit op zichzelf een reden om het ook te mogen.
-          </div>
-        </div>
-      `;
-    }
-
-    function resetForm() {
-      document.getElementById('bb').value = 63;
-      document.getElementById('sleep').value = 69;
-      document.getElementById('hrv').value = 53;
-      document.getElementById('stress').value = 20;
-      document.getElementById('recovery').value = 58;
-      document.getElementById('mono').value = 6.4;
-      document.getElementById('gevoel').value = 'ok';
-      document.getElementById('lichaam').value = 'fris';
-      document.getElementById('weer').value = 'ok';
-      document.getElementById('darmen').value = 'goed';
-      document.getElementById('trend').value = 'dalend';
-      document.getElementById('focus').value = 'auto';
-      document.getElementById('gisteren').value = 'wandelen';
-      document.getElementById('eergisteren').value = 'wandelen';
-
-      document.querySelectorAll('.chip').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('[data-group="moment"]').forEach(btn => btn.classList.add('active'));
-      document.querySelectorAll('[data-group="duur"]').forEach(btn => {
-        if (['20','30','45'].includes(btn.dataset.value)) btn.classList.add('active');
-      });
-
-      document.getElementById('output').innerHTML = 'Nog niets berekend.';
-    }
-  </script>
+
+<div class="wrap">
+
+<h1>🔥 Weekcoach V7</h1>
+
+<div class="card">
+
+<b>Garmin</b>
+
+<input id="bb" placeholder="Body Battery" value="60">
+<input id="sleep" placeholder="Slaapscore" value="70">
+<input id="hrv" placeholder="HRV" value="50">
+<input id="stress" placeholder="Stress" value="20">
+
+<b>Check-in</b>
+
+<select id="gevoel">
+<option>slecht</option>
+<option selected>ok</option>
+<option>goed</option>
+</select>
+
+<select id="lichaam">
+<option>moe</option>
+<option>stijf</option>
+<option selected>fris</option>
+</select>
+
+<select id="darmen">
+<option>goed</option>
+<option>traag</option>
+<option>slecht</option>
+</select>
+
+<b>Moment (meerdere mogelijk)</b>
+<div class="chips">
+<div class="chip active" onclick="toggle(this)">ochtend</div>
+<div class="chip active" onclick="toggle(this)">middag</div>
+<div class="chip active" onclick="toggle(this)">avond</div>
+</div>
+
+<b>Duur (meerdere mogelijk)</b>
+<div class="chips">
+<div class="chip active" onclick="toggle(this)">20</div>
+<div class="chip active" onclick="toggle(this)">30</div>
+<div class="chip active" onclick="toggle(this)">45</div>
+<div class="chip" onclick="toggle(this)">60</div>
+</div>
+
+<button onclick="bereken()">Wat vandaag?</button>
+
+</div>
+
+<div class="card" id="result">...</div>
+
+</div>
+
+<script>
+
+function toggle(el){
+el.classList.toggle("active");
+}
+
+function getSelected(index){
+return [...document.querySelectorAll(".chips")[index].children]
+.filter(c=>c.classList.contains("active"))
+.map(c=>c.innerText);
+}
+
+function bereken(){
+
+let bb = parseInt(document.getElementById("bb").value);
+let sleep = parseInt(document.getElementById("sleep").value);
+let hrv = parseInt(document.getElementById("hrv").value);
+let stress = parseInt(document.getElementById("stress").value);
+
+let gevoel = document.getElementById("gevoel").value;
+let lichaam = document.getElementById("lichaam").value;
+let darmen = document.getElementById("darmen").value;
+
+let moments = getSelected(0);
+let durations = getSelected(1);
+
+let readiness = Math.round(
+(bb*0.3)+(sleep*0.25)+(hrv*0.2)+((100-stress)*0.25)
+);
+
+// modifiers
+if(gevoel==="slecht") readiness -= 10;
+if(lichaam==="moe") readiness -= 10;
+if(darmen==="slecht") readiness -= 5;
+
+let type="",plan="",notdo="",steps="",coach="";
+
+// HARD STOP
+if(readiness <50){
+type="🔴 STOP";
+plan="Max 15-20 min wandelen of rust";
+notdo="Niet trainen";
+steps="5000-6000";
+coach="Vandaag niet trainen. Punt.";
+}
+
+// HERSTEL
+else if(readiness <65){
+type="🟠 Herstel";
+
+let dur = durations.includes("30")?"30":"20";
+let mom = moments.includes("ochtend")?"ochtend":moments[0];
+
+plan = dur+" min rustige wandeling ("+mom+")";
+notdo="Geen kracht, geen versnellingen";
+steps="6500-8000";
+coach="Je lichaam is niet klaar om te trainen. Bewegen mag, pushen niet.";
+}
+
+// LICHTE TRAINING
+else if(readiness <75){
+
+type="🟢 Licht actief";
+
+let dur = durations.includes("45")?"45":"30";
+let mom = moments.includes("middag")?"middag":moments[0];
+
+plan = dur+" min zone 2 training ("+mom+")";
+notdo="Niet tot uitputting";
+steps="7500-9000";
+coach="Je mag trainen, maar gecontroleerd. Geen heroïsche sessies.";
+}
+
+// TRAIN
+else{
+
+type="🔵 Train";
+
+let dur = durations.includes("45")?"45":"30";
+let mom = moments.includes("middag")?"middag":moments[0];
+
+plan = dur+" min training ("+mom+")";
+notdo="Niet overdrijven";
+steps="9000-11000";
+coach="Groen licht. Vandaag mag je trainen.";
+}
+
+document.getElementById("result").innerHTML =
+
+"<b>Readiness:</b> "+readiness+"<br><br>"+
+"<b>Dagtype:</b> "+type+"<br><br>"+
+"<b>Vandaag doen:</b><br>"+plan+"<br><br>"+
+"<b>Vandaag niet doen:</b><br>"+notdo+"<br><br>"+
+"<b>Stapdoel:</b> "+steps+"<br><br>"+
+"<b>Coach:</b><br>"+coach;
+
+}
+
+</script>
+
 </body>
 </html>
