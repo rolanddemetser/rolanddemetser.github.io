@@ -1,532 +1,303 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f3f4f6" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Pro coach RDM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro coach RDM</title>
 
-  <style>
-    :root{
-      --bg:#f3f4f6;
-      --card:#ffffff;
-      --text:#111111;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --good:#dff7e6;
-      --warn:#fff1cc;
-      --bad:#ffd9d9;
-      --shadow:0 8px 20px rgba(0,0,0,0.05);
-      --radius:18px;
-    }
+<style>
+:root{
+  --bg:#f3f4f6;
+  --card:#ffffff;
+  --text:#111;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --good:#dff7e6;
+  --mid:#fff1cc;
+  --bad:#ffd9d9;
+}
 
-    *{
-      box-sizing:border-box;
-    }
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+  background:var(--bg);
+  color:var(--text);
+}
 
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
+.wrap{
+  max-width:760px;
+  margin:auto;
+  padding:16px;
+}
 
-    .wrap{
-      max-width:760px;
-      margin:0 auto;
-      padding:16px 16px 40px;
-    }
+h1{
+  font-size:34px;
+  font-weight:900;
+  margin:0;
+}
 
-    h1{
-      margin:0 0 6px;
-      font-size:34px;
-      line-height:1.02;
-      font-weight:900;
-      letter-spacing:-0.7px;
-    }
+.sub{
+  color:var(--muted);
+  margin-bottom:16px;
+  font-weight:600;
+}
 
-    .sub{
-      color:var(--muted);
-      margin:0 0 18px;
-      font-weight:650;
-      font-size:17px;
-      line-height:1.35;
-    }
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:16px;
+  margin-bottom:16px;
+}
 
-    .card{
-      background:var(--card);
-      padding:16px;
-      border-radius:var(--radius);
-      margin-bottom:16px;
-      box-shadow:var(--shadow);
-    }
+.section{
+  font-weight:800;
+  margin-bottom:10px;
+}
 
-    .section-title{
-      font-size:20px;
-      font-weight:850;
-      margin:0 0 12px;
-    }
+input, select{
+  width:100%;
+  padding:14px;
+  margin-bottom:10px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:16px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
+button{
+  width:100%;
+  padding:16px;
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-size:18px;
+  font-weight:900;
+}
 
-    @media (min-width:700px){
-      .grid.two{
-        grid-template-columns:1fr 1fr;
-      }
-    }
+.verdict{
+  padding:18px;
+  border-radius:14px;
+  text-align:center;
+  font-weight:900;
+  font-size:24px;
+  margin-bottom:12px;
+}
 
-    label{
-      display:block;
-      font-weight:760;
-      margin:0 0 6px;
-      font-size:16px;
-    }
+.good{background:var(--good);}
+.mid{background:var(--mid);}
+.bad{background:var(--bad);}
 
-    input, select{
-      width:100%;
-      padding:14px;
-      border-radius:14px;
-      border:1px solid #d1d5db;
-      background:#fff;
-      font-size:18px;
-      color:#111;
-      appearance:none;
-      -webkit-appearance:none;
-    }
+.block{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:10px;
+}
 
-    button{
-      width:100%;
-      margin-top:16px;
-      padding:17px;
-      background:#111;
-      color:#fff;
-      border:none;
-      border-radius:14px;
-      font-size:20px;
-      font-weight:900;
-      cursor:pointer;
-    }
+.kicker{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:4px;
+}
 
-    .divider{
-      height:1px;
-      background:var(--line);
-      margin:14px 0;
-    }
+.main{
+  font-size:26px;
+  font-weight:900;
+}
 
-    .verdict{
-      padding:18px;
-      border-radius:16px;
-      font-size:24px;
-      line-height:1.12;
-      font-weight:900;
-      text-align:center;
-      margin-bottom:12px;
-    }
+.text{
+  font-size:16px;
+  color:var(--muted);
+  font-weight:600;
+}
 
-    .good{ background:var(--good); }
-    .mid{ background:var(--warn); }
-    .bad{ background:var(--bad); }
+.flag{
+  background:var(--bad);
+  padding:14px;
+  border-radius:12px;
+  font-weight:800;
+  margin-bottom:10px;
+}
 
-    .flag{
-      margin-bottom:12px;
-      padding:14px;
-      border-radius:14px;
-      background:var(--bad);
-      font-size:18px;
-      line-height:1.35;
-      font-weight:850;
-    }
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-    .block{
-      padding:16px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      margin-bottom:12px;
-      background:#fff;
-    }
+.stat{
+  background:#f9fafb;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+}
 
-    .kicker{
-      font-size:13px;
-      color:var(--muted);
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:0.5px;
-      margin-bottom:6px;
-    }
+.stat small{
+  color:var(--muted);
+}
 
-    .main{
-      font-size:30px;
-      line-height:1.08;
-      font-weight:900;
-    }
-
-    .text{
-      font-size:18px;
-      line-height:1.35;
-      color:var(--muted);
-      font-weight:750;
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:4px;
-    }
-
-    @media (min-width:700px){
-      .stats{
-        grid-template-columns:repeat(4,1fr);
-      }
-    }
-
-    .stat{
-      background:#f9fafb;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-    }
-
-    .stat small{
-      color:var(--muted);
-      font-weight:750;
-      display:block;
-      margin-bottom:4px;
-    }
-
-    .stat b{
-      font-size:22px;
-      line-height:1.1;
-      display:block;
-    }
-
-    .empty{
-      color:var(--muted);
-      font-size:18px;
-      font-weight:700;
-    }
-  </style>
+.stat b{
+  font-size:18px;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <h1>🔥 Pro coach RDM</h1>
-    <div class="sub">Level 2. Ochtend eerst. Coach bewaakt belasting.</div>
 
-    <div class="card">
-      <div class="section-title">Garmin</div>
+<div class="wrap">
+  <h1>🔥 Pro coach RDM</h1>
+  <div class="sub">Level 2. Ochtend eerst. Coach bewaakt belasting.</div>
 
-      <div class="grid two">
-        <div>
-          <label for="bb">Body Battery</label>
-          <input id="bb" type="number" min="0" max="100" value="63" />
-        </div>
+  <div class="card">
+    <div class="section">Garmin</div>
+    <input id="bb" type="number" placeholder="Body Battery" value="63">
+    <input id="sleep" type="number" placeholder="Slaapscore" value="69">
+    <input id="hrv" type="number" placeholder="HRV" value="53">
+    <input id="stress" type="number" placeholder="Stress" value="20">
 
-        <div>
-          <label for="sleep">Slaapscore</label>
-          <input id="sleep" type="number" min="0" max="100" value="69" />
-        </div>
+    <div class="section">Check-in</div>
+    <select id="gevoel">
+      <option>goed</option>
+      <option selected>ok</option>
+      <option>slecht</option>
+    </select>
 
-        <div>
-          <label for="hrv">HRV</label>
-          <input id="hrv" type="number" min="0" max="120" value="53" />
-        </div>
+    <select id="lichaam">
+      <option selected>fris</option>
+      <option>stijf</option>
+      <option>moe</option>
+    </select>
 
-        <div>
-          <label for="stress">Stress</label>
-          <input id="stress" type="number" min="0" max="100" value="20" />
-        </div>
-      </div>
+    <select id="darmen">
+      <option selected>goed</option>
+      <option>traag</option>
+      <option>slecht</option>
+    </select>
 
-      <div class="divider"></div>
+    <div class="section">Belasting</div>
+    <select id="days">
+      <option>0</option><option>1</option><option>2</option>
+      <option selected>3</option><option>4</option>
+    </select>
 
-      <div class="section-title">Check-in</div>
+    <select id="heavy">
+      <option selected>nee</option>
+      <option>ja</option>
+    </select>
 
-      <div class="grid two">
-        <div>
-          <label for="gevoel">Gevoel</label>
-          <select id="gevoel">
-            <option value="goed">goed</option>
-            <option value="ok" selected>ok</option>
-            <option value="slecht">slecht</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="lichaam">Lichaam</label>
-          <select id="lichaam">
-            <option value="fris" selected>fris</option>
-            <option value="stijf">stijf</option>
-            <option value="moe">moe</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="darmen">Darmen</label>
-          <select id="darmen">
-            <option value="goed" selected>goed</option>
-            <option value="traag">traag</option>
-            <option value="slecht">slecht</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="section-title">Belastingbewaking</div>
-
-      <div class="grid two">
-        <div>
-          <label for="days">Dagen op rij getraind</label>
-          <select id="days">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4+</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="heavy">Gisteren zwaar getraind?</label>
-          <select id="heavy">
-            <option value="nee" selected>nee</option>
-            <option value="ja">ja</option>
-          </select>
-        </div>
-      </div>
-
-      <button onclick="bereken()">Wat vandaag?</button>
-    </div>
-
-    <div class="card" id="result">
-      <div class="empty">Nog niets berekend</div>
-    </div>
+    <button onclick="run()">Wat vandaag?</button>
   </div>
 
-  <script>
-    function clamp(x, min, max){
-      return Math.max(min, Math.min(max, x));
-    }
+  <div class="card" id="result">
+    Nog niets berekend
+  </div>
+</div>
 
-    function hrvToScore(hrv){
-      if(hrv >= 75) return 92;
-      if(hrv >= 65) return 84;
-      if(hrv >= 55) return 76;
-      if(hrv >= 45) return 66;
-      if(hrv >= 35) return 52;
-      return 38;
-    }
+<script>
 
-    function coachUitleg(verdict, days, heavy, stress, darmen){
-      if(verdict === "BEWUST LICHT"){
-        return "Je zit niet slecht, maar de opeenstapeling van training begint te tellen. Vandaag bewust onder je limiet blijven.";
-      }
-      if(verdict === "LICHT TRAINEN"){
-        return "Je zit in een stabiele opbouwfase. Goed genoeg om te bewegen, niet om te pushen.";
-      }
-      if(verdict === "GOED OM TE TRAINEN"){
-        return "Je lichaam is klaar voor een gecontroleerde trainingsprikkel.";
-      }
-      if(verdict === "HERSTELDAG"){
-        return "Vandaag levert rustiger bewegen meer op dan extra belasting.";
-      }
-      if(verdict === "STOP"){
-        return "Vandaag is herstel de beste keuze.";
-      }
-      if(verdict === "AFREMMEN"){
-        return "Je systeem staat onder druk. Alles forceren werkt vandaag tegen je.";
-      }
-      if(stress > 45){
-        return "Je stress ligt te hoog om nuttig te trainen.";
-      }
-      if(darmen === "slecht"){
-        return "Je buik is vandaag de beperkende factor.";
-      }
-      if(days >= 3){
-        return "De optelsom van de voorbije dagen weegt door.";
-      }
-      if(heavy === "ja"){
-        return "Gisteren zat al genoeg prikkel. Vandaag hou je het lager.";
-      }
-      return "Vandaag gecontroleerd blijven.";
-    }
+function scoreHRV(hrv){
+  if(hrv>70) return 90;
+  if(hrv>60) return 80;
+  if(hrv>50) return 70;
+  if(hrv>40) return 60;
+  return 50;
+}
 
-    function bereken(){
-      const bb = clamp(parseInt(document.getElementById("bb").value) || 0, 0, 100);
-      const sleep = clamp(parseInt(document.getElementById("sleep").value) || 0, 0, 100);
-      const hrv = clamp(parseInt(document.getElementById("hrv").value) || 0, 0, 120);
-      const stress = clamp(parseInt(document.getElementById("stress").value) || 0, 0, 100);
+function coach(verdict){
+  if(verdict==="LICHT HOUDEN"){
+    return "Je zit nog goed, maar dit is het kantelpunt. Vandaag onder je limiet blijven.";
+  }
+  if(verdict==="TRAINEN"){
+    return "Je lichaam is klaar. Hou controle en dit wordt een nuttige sessie.";
+  }
+  if(verdict==="HERSTEL"){
+    return "Vandaag win je door minder te doen.";
+  }
+  if(verdict==="STOP"){
+    return "Vandaag niet trainen.";
+  }
+  return "";
+}
 
-      const gevoel = document.getElementById("gevoel").value;
-      const lichaam = document.getElementById("lichaam").value;
-      const darmen = document.getElementById("darmen").value;
+function run(){
 
-      const days = parseInt(document.getElementById("days").value) || 0;
-      const heavy = document.getElementById("heavy").value;
+let bb = +bb.value;
+let sleep = +sleep.value;
+let hrv = +hrv.value;
+let stress = +stress.value;
+let days = +document.getElementById("days").value;
+let heavy = heavySelect = document.getElementById("heavy").value;
 
-      let score =
-        (bb * 0.30) +
-        (sleep * 0.25) +
-        (hrvToScore(hrv) * 0.25) +
-        ((100 - stress) * 0.20);
+let score =
+(bb*0.3)+(sleep*0.25)+(scoreHRV(hrv)*0.25)+((100-stress)*0.2);
 
-      if(gevoel === "goed") score += 5;
-      if(gevoel === "slecht") score -= 10;
+if(days>=3) score-=10;
+if(days>=4) score-=10;
+if(heavy==="ja") score-=8;
 
-      if(lichaam === "fris") score += 3;
-      if(lichaam === "stijf") score -= 6;
-      if(lichaam === "moe") score -= 15;
+score=Math.round(score);
 
-      if(darmen === "traag") score -= 4;
-      if(darmen === "slecht") score -= 10;
+let verdict, cls, doen, niet, vlag="";
 
-      if(days === 2) score -= 5;
-      if(days === 3) score -= 12;
-      if(days >= 4) score -= 18;
+if(stress>45){
+  verdict="STOP"; cls="bad";
+  doen="wandelen";
+  niet="geen training";
+  vlag="Stress te hoog";
+}
+else if(days>=3){
+  verdict="LICHT HOUDEN"; cls="mid";
+  doen="20–25 min zone 2";
+  niet="niet forceren";
+  vlag="3 dagen op rij getraind";
+}
+else if(score>70){
+  verdict="TRAINEN"; cls="good";
+  doen="30–40 min zone 2";
+  niet="niet overdrijven";
+}
+else if(score>55){
+  verdict="LICHT"; cls="mid";
+  doen="25 min zone 2";
+  niet="niet pushen";
+}
+else{
+  verdict="HERSTEL"; cls="bad";
+  doen="wandelen";
+  niet="geen intensiteit";
+}
 
-      if(heavy === "ja") score -= 8;
+document.getElementById("result").innerHTML = `
+<div class="verdict ${cls}">${verdict}</div>
 
-      score = Math.round(clamp(score, 0, 100));
+<div class="block">
+<div class="kicker">Vandaag</div>
+<div class="main">${doen}</div>
+</div>
 
-      let verdict = "";
-      let verdictClass = "mid";
-      let doen = "";
-      let niet = "";
-      let zone = "";
-      let stappen = "";
-      let dagtype = "";
-      let rodeVlag = "";
+<div class="block">
+<div class="kicker">Rem</div>
+<div class="text">${niet}</div>
+</div>
 
-      if(stress > 45){
-        verdict = "AFREMMEN";
-        verdictClass = "bad";
-        doen = "20–30 min rustig wandelen (ochtend)";
-        niet = "geen training";
-        zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "afremmen";
-        rodeVlag = "Stress te hoog. Vandaag niet doorduwen.";
-      }
-      else if(darmen === "slecht"){
-        verdict = "HERSTELDAG";
-        verdictClass = "bad";
-        doen = "korte rustige wandeling (ochtend)";
-        niet = "geen training";
-        zone = "zone 1";
-        stappen = "5000–7000";
-        dagtype = "herstel";
-        rodeVlag = "Buik niet goed. Vandaag simpel houden.";
-      }
-      else if(days >= 3){
-        verdict = "BEWUST LICHT";
-        verdictClass = "mid";
-        doen = "20–25 min zone 2 (ochtend)";
-        niet = "niet forceren, niet verlengen";
-        zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-        rodeVlag = "Cumulatieve belasting. Vandaag bewust lager houden.";
-      }
-      else if(heavy === "ja" && score >= 60){
-        verdict = "LICHT HOUDEN";
-        verdictClass = "mid";
-        doen = "20–25 min zone 2 (ochtend)";
-        niet = "geen tweede zware prikkel";
-        zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-        rodeVlag = "Gisteren was al zwaar. Vandaag onder controle blijven.";
-      }
-      else if(score < 50){
-        verdict = "STOP";
-        verdictClass = "bad";
-        doen = "rustdag";
-        niet = "geen training";
-        zone = "zone 1";
-        stappen = "5000–6500";
-        dagtype = "herstel";
-      }
-      else if(score < 60){
-        verdict = "HERSTELDAG";
-        verdictClass = "mid";
-        doen = "20 min wandelen (ochtend)";
-        niet = "geen intensiteit";
-        zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "herstel";
-      }
-      else if(score < 70){
-        verdict = "LICHT TRAINEN";
-        verdictClass = "mid";
-        doen = "25 min zone 2 (ochtend)";
-        niet = "niet pushen";
-        zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-      }
-      else{
-        verdict = "GOED OM TE TRAINEN";
-        verdictClass = "good";
-        doen = "30–40 min zone 2 (ochtend)";
-        niet = "geen tweede zware prikkel";
-        zone = "zone 2";
-        stappen = "7500–9500";
-        dagtype = "trainbaar";
-      }
+${vlag? `<div class="flag">${vlag}</div>`:""}
 
-      if(lichaam === "stijf" && !["STOP","AFREMMEN","HERSTELDAG"].includes(verdict)){
-        doen += " + mobiliteit";
-      }
+<div class="block">
+<div class="kicker">Coach</div>
+<div class="text">${coach(verdict)}</div>
+</div>
 
-      const uitleg = coachUitleg(verdict, days, heavy, stress, darmen);
+<div class="stats">
+<div class="stat"><small>Score</small><b>${score}</b></div>
+<div class="stat"><small>Zone</small><b>zone 2</b></div>
+<div class="stat"><small>Stappen</small><b>7000–9000</b></div>
+<div class="stat"><small>Dagtype</small><b>${verdict}</b></div>
+</div>
+`;
 
-      document.getElementById("result").innerHTML = `
-        <div class="verdict ${verdictClass}">${verdict}</div>
+}
+</script>
 
-        ${rodeVlag ? `<div class="flag">${rodeVlag}</div>` : ""}
-
-        <div class="block">
-          <div class="kicker">Vandaag</div>
-          <div class="main">${doen}</div>
-        </div>
-
-        <div class="block">
-          <div class="kicker">Hou dit in de gaten</div>
-          <div class="text">${niet}</div>
-        </div>
-
-        <div class="block">
-          <div class="kicker">Coach zegt</div>
-          <div class="text">${uitleg}</div>
-        </div>
-
-        <div class="stats">
-          <div class="stat">
-            <small>Readiness</small>
-            <b>${score}</b>
-          </div>
-          <div class="stat">
-            <small>Zone</small>
-            <b>${zone}</b>
-          </div>
-          <div class="stat">
-            <small>Stappen</small>
-            <b>${stappen}</b>
-          </div>
-          <div class="stat">
-            <small>Dagtype</small>
-            <b>${dagtype}</b>
-          </div>
-        </div>
-      `;
-    }
-  </script>
 </body>
 </html>
