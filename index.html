@@ -8,9 +8,8 @@
 <style>
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont;
+  font-family:-apple-system;
   background:#f3f4f6;
-  color:#111;
 }
 
 .wrap{
@@ -22,26 +21,25 @@ body{
 h1{
   font-size:34px;
   font-weight:900;
-  margin:0;
 }
 
 .sub{
   color:#6b7280;
-  margin:4px 0 18px;
+  margin-bottom:16px;
   font-weight:600;
 }
 
 .card{
   background:#fff;
-  border-radius:18px;
   padding:16px;
+  border-radius:18px;
   margin-bottom:16px;
 }
 
 label{
   font-weight:700;
-  display:block;
   margin-top:10px;
+  display:block;
 }
 
 input,select{
@@ -53,27 +51,7 @@ input,select{
   margin-top:4px;
 }
 
-.chips{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-
-.chip{
-  padding:10px 14px;
-  border-radius:999px;
-  background:#e5e7eb;
-  border:none;
-  font-weight:800;
-}
-
-.active{
-  background:#111;
-  color:#fff;
-}
-
-.btn{
+button{
   width:100%;
   margin-top:14px;
   padding:16px;
@@ -88,7 +66,7 @@ input,select{
 .verdict{
   padding:18px;
   border-radius:16px;
-  font-size:24px;
+  font-size:22px;
   font-weight:900;
 }
 
@@ -104,7 +82,7 @@ input,select{
 }
 
 .do{
-  font-size:32px;
+  font-size:28px;
   font-weight:900;
 }
 
@@ -127,14 +105,8 @@ input,select{
   border-radius:12px;
 }
 
-.stat small{
-  color:#6b7280;
-}
-
-.stat b{
-  display:block;
-  font-size:22px;
-}
+.stat small{color:#6b7280;}
+.stat b{font-size:22px;}
 </style>
 </head>
 
@@ -180,22 +152,7 @@ input,select{
 <option>slecht</option>
 </select>
 
-<label>Momenten</label>
-<div class="chips">
-<button class="chip active" onclick="toggle(this)">ochtend</button>
-<button class="chip active" onclick="toggle(this)">middag</button>
-<button class="chip active" onclick="toggle(this)">avond</button>
-</div>
-
-<label>Duur</label>
-<div class="chips">
-<button class="chip active" onclick="toggle(this)">20</button>
-<button class="chip active" onclick="toggle(this)">30</button>
-<button class="chip active" onclick="toggle(this)">45</button>
-<button class="chip" onclick="toggle(this)">60</button>
-</div>
-
-<button class="btn" onclick="run()">Wat vandaag?</button>
+<button onclick="run()">Wat vandaag?</button>
 
 </div>
 
@@ -204,10 +161,6 @@ input,select{
 </div>
 
 <script>
-
-function toggle(el){
-  el.classList.toggle("active")
-}
 
 function run(){
 
@@ -221,59 +174,52 @@ let score = (bb*0.3)+(sleep*0.25)+(hrv*0.25)+((100-stress)*0.2)
 if(gevoel.value=="goed") score+=5
 if(gevoel.value=="slecht") score-=10
 
-if(lichaam.value=="moe") score-=10
-if(lichaam.value=="stijf") score-=5
+if(lichaam.value=="moe") score-=12
+if(lichaam.value=="stijf") score-=6
 
 if(darmen.value=="slecht") score-=8
 if(darmen.value=="traag") score-=4
 
-score=Math.max(0,Math.min(100,Math.round(score)))
-
-let moment = [...document.querySelectorAll('.chip.active')]
-.map(x=>x.innerText)
-
-let tijd="ochtend"
-if(!moment.includes("ochtend")){
-  tijd = moment.includes("middag") ? "middag":"avond"
-}
-
-let dur=[...document.querySelectorAll('.chip.active')]
-.map(x=>x.innerText).filter(x=>!isNaN(x))
-
-let d=dur.map(Number).sort((a,b)=>a-b)
-
-let duur=20
-
-if(score>75 && d.includes(45)) duur=45
-else if(score>60 && d.includes(30)) duur=30
-else duur=d[0]
+score=Math.round(Math.max(0,Math.min(100,score)))
 
 let verdict=""
 let kleur="mid"
-
-if(score<50){
-  verdict="STOP. Herstel."
-  kleur="bad"
-}
-else if(score<65){
-  verdict="Rustig bewegen."
-}
-else if(score<75){
-  verdict="Train gecontroleerd."
-}
-else{
-  verdict="Go."
-  kleur="good"
-}
-
-let actie=`${duur} min zone 2 (${tijd})`
+let actie=""
 let dont="niet tot uitputting"
+let duur=0
 
-if(score<50){
-  actie="wandelen of rust"
+// STRAKKE LOGICA
+if(score<55){
+  verdict="STOP"
+  kleur="bad"
+  actie="rust / korte wandeling"
   dont="geen training"
 }
+else if(score<65){
+  verdict="HERSTEL"
+  actie="20 min wandelen of yoga"
+}
+else if(score<75){
+  verdict="TRAIN – licht"
+  actie="30 min zone 2 (ochtend)"
+}
+else if(score<85){
+  verdict="TRAIN"
+  kleur="good"
+  actie="45 min zone 2 (ochtend)"
+}
+else{
+  verdict="TOPDAG"
+  kleur="good"
+  actie="45–60 min (ochtend)"
+}
 
+// extra veiligheid
+if(stress>40){
+  actie="korter trainen"
+}
+
+// output
 document.getElementById("result").innerHTML=`
 <div class="verdict ${kleur}">${verdict}</div>
 
@@ -284,7 +230,7 @@ document.getElementById("result").innerHTML=`
 
 <div class="stats">
 <div class="stat"><small>Readiness</small><b>${score}</b></div>
-<div class="stat"><small>Moment</small><b>${tijd}</b></div>
+<div class="stat"><small>Focus</small><b>ochtend</b></div>
 </div>
 `
 
