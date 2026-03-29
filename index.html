@@ -1,185 +1,743 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Coach RDM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3f4f6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pro Coach RDM" />
+  <title>Pro Coach RDM</title>
 
-<style>
-body{
-  font-family:-apple-system;
-  background:#f3f4f6;
-  margin:0;
-  padding:16px;
-}
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --text:#111111;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --soft:#f8fafc;
+      --good:#dff7e6;
+      --mid:#f4e8c2;
+      --bad:#f6d4d4;
+      --alert:#efd1d1;
+      --shadow:0 10px 24px rgba(0,0,0,0.05);
+      --radius:24px;
+    }
 
-h1{
-  font-size:34px;
-  font-weight:900;
-  margin-bottom:8px;
-}
+    *{
+      box-sizing:border-box;
+    }
 
-.sub{
-  color:#6b7280;
-  font-weight:700;
-  margin-bottom:20px;
-}
+    html, body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    }
 
-.card{
-  background:white;
-  padding:16px;
-  border-radius:20px;
-  margin-bottom:16px;
-}
+    body{
+      min-height:100vh;
+    }
 
-input, select{
-  width:100%;
-  padding:14px;
-  margin-bottom:12px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:16px;
-}
+    .wrap{
+      max-width:760px;
+      margin:0 auto;
+      padding:20px 16px 40px;
+    }
 
-button{
-  width:100%;
-  padding:16px;
-  background:black;
-  color:white;
-  border:none;
-  border-radius:14px;
-  font-size:18px;
-  font-weight:900;
-}
+    h1{
+      margin:0 0 10px;
+      font-size:34px;
+      line-height:1.02;
+      font-weight:900;
+      letter-spacing:-0.8px;
+    }
 
-.verdict{
-  padding:16px;
-  border-radius:16px;
-  font-size:26px;
-  font-weight:900;
-  text-align:center;
-  margin-bottom:12px;
-}
+    .sub{
+      margin:0 0 20px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.32;
+      font-weight:700;
+    }
 
-.mid{ background:#f5e7c2; }
-.bad{ background:#f6d4d4; }
-.good{ background:#dff7e6; }
+    .screen{
+      display:none;
+    }
 
-.block{
-  background:white;
-  padding:16px;
-  border-radius:16px;
-  margin-bottom:12px;
-}
+    .screen.active{
+      display:block;
+    }
 
-.title{
-  font-size:13px;
-  color:#6b7280;
-  font-weight:900;
-}
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      margin-bottom:18px;
+      box-shadow:var(--shadow);
+    }
 
-.big{
-  font-size:26px;
-  font-weight:900;
-}
+    .section-title{
+      margin:0 0 14px;
+      font-size:22px;
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-0.3px;
+    }
 
-.hidden{
-  display:none;
-}
-</style>
+    .divider{
+      height:1px;
+      background:#e5e7eb;
+      margin:18px 0;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    @media (min-width:720px){
+      .grid.two{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .stats{
+        grid-template-columns:repeat(4,1fr);
+      }
+    }
+
+    .field label{
+      display:block;
+      margin:0 0 7px;
+      color:var(--muted);
+      font-size:14px;
+      font-weight:900;
+      line-height:1.2;
+    }
+
+    .hint{
+      display:block;
+      margin-top:4px;
+      font-size:12px;
+      color:#9ca3af;
+      font-weight:700;
+      line-height:1.25;
+    }
+
+    input, select{
+      width:100%;
+      padding:15px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#111;
+      font-size:18px;
+      appearance:none;
+      -webkit-appearance:none;
+    }
+
+    input::placeholder{
+      color:#9ca3af;
+    }
+
+    .btn{
+      width:100%;
+      margin-top:16px;
+      padding:18px;
+      border:none;
+      border-radius:18px;
+      background:#111;
+      color:#fff;
+      font-size:20px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .btn.secondary{
+      background:#e5e7eb;
+      color:#111;
+      margin-top:10px;
+    }
+
+    .pill{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef2f7;
+      color:#374151;
+      font-size:13px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      margin-bottom:12px;
+    }
+
+    .verdict{
+      padding:18px;
+      border-radius:18px;
+      font-size:28px;
+      line-height:1.08;
+      font-weight:900;
+      text-align:center;
+      margin-bottom:14px;
+      letter-spacing:-0.5px;
+    }
+
+    .good{ background:var(--good); }
+    .mid{ background:var(--mid); }
+    .bad{ background:var(--bad); }
+
+    .alert{
+      background:var(--alert);
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:14px;
+      font-size:18px;
+      line-height:1.28;
+      font-weight:900;
+    }
+
+    .block{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:12px;
+    }
+
+    .kicker{
+      margin-bottom:8px;
+      font-size:13px;
+      color:var(--muted);
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:0.7px;
+    }
+
+    .main{
+      font-size:28px;
+      line-height:1.08;
+      font-weight:900;
+      letter-spacing:-0.5px;
+    }
+
+    .text{
+      font-size:18px;
+      line-height:1.35;
+      color:#4b5563;
+      font-weight:800;
+    }
+
+    .not-more{
+      margin-top:12px;
+      font-size:22px;
+      line-height:1.1;
+      font-weight:900;
+      color:#111;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .stat{
+      background:var(--soft);
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .stat small{
+      display:block;
+      margin-bottom:4px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+
+    .stat b{
+      display:block;
+      font-size:22px;
+      line-height:1.1;
+      letter-spacing:-0.4px;
+    }
+
+    .error{
+      background:#ffe7e7;
+      border:1px solid #f3b3b3;
+      color:#8b1f1f;
+      border-radius:18px;
+      padding:16px;
+      font-size:17px;
+      line-height:1.35;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <h1>🔥 Pro coach RDM</h1>
+    <div class="sub">Level 6. Één duidelijke beslissing per dag.</div>
 
-<h1>🔥 Pro coach RDM</h1>
-<div class="sub">Level 6. Één duidelijke beslissing per dag.</div>
+    <!-- SCHERM 1: INVULLEN -->
+    <div id="screen-form" class="screen active">
+      <div id="form-error"></div>
 
-<!-- RESULT -->
-<div id="result"></div>
+      <div class="card">
+        <div class="section-title">Herstel</div>
+        <div class="grid two">
+          <div class="field">
+            <label for="bb">Body Battery
+              <span class="hint">Garmin ochtendwaarde, bv. 63</span>
+            </label>
+            <input id="bb" type="number" min="0" max="100" placeholder="bv. 63">
+          </div>
 
-<!-- FORM -->
-<div id="form" class="card">
+          <div class="field">
+            <label for="sleep">Slaapscore
+              <span class="hint">Garmin slaapscore, bv. 69</span>
+            </label>
+            <input id="sleep" type="number" min="0" max="100" placeholder="bv. 69">
+          </div>
 
-<input id="bb" value="63" placeholder="Body Battery">
-<input id="sleep" value="69" placeholder="Slaapscore">
-<input id="hrv" value="53" placeholder="HRV">
-<input id="stress" value="20" placeholder="Stress">
+          <div class="field">
+            <label for="hrv">HRV
+              <span class="hint">Ochtendsnapshot, bv. 53</span>
+            </label>
+            <input id="hrv" type="number" min="0" max="120" placeholder="bv. 53">
+          </div>
 
-<select id="days">
-<option>0</option>
-<option>1</option>
-<option>2</option>
-<option selected>3</option>
-<option>4</option>
-</select>
+          <div class="field">
+            <label for="stress">Stress
+              <span class="hint">Huidige of ochtendstress, bv. 20</span>
+            </label>
+            <input id="stress" type="number" min="0" max="100" placeholder="bv. 20">
+          </div>
+        </div>
 
-<select id="trend">
-<option>beter</option>
-<option selected>stabiel</option>
-<option>slechter</option>
-</select>
+        <div class="divider"></div>
 
-<button onclick="run()">Bepaal mijn dag</button>
+        <div class="section-title">Check-in</div>
+        <div class="grid two">
+          <div class="field">
+            <label for="gevoel">Gevoel
+              <span class="hint">Hoe voel je je algemeen?</span>
+            </label>
+            <select id="gevoel">
+              <option value="" selected disabled>Kies gevoel</option>
+              <option value="goed">goed</option>
+              <option value="ok">ok</option>
+              <option value="slecht">slecht</option>
+            </select>
+          </div>
 
-</div>
+          <div class="field">
+            <label for="lichaam">Lichaam
+              <span class="hint">Fris, stijf of moe?</span>
+            </label>
+            <select id="lichaam">
+              <option value="" selected disabled>Kies lichaam</option>
+              <option value="fris">fris</option>
+              <option value="stijf">stijf</option>
+              <option value="moe">moe</option>
+            </select>
+          </div>
 
-<script>
-function run(){
+          <div class="field">
+            <label for="darmen">Darmen
+              <span class="hint">Belangrijk in jouw context</span>
+            </label>
+            <select id="darmen">
+              <option value="" selected disabled>Kies darmen</option>
+              <option value="goed">goed</option>
+              <option value="traag">traag</option>
+              <option value="slecht">slecht</option>
+            </select>
+          </div>
 
-let bb = Number(document.getElementById("bb").value);
-let sleep = Number(document.getElementById("sleep").value);
-let hrv = Number(document.getElementById("hrv").value);
-let stress = Number(document.getElementById("stress").value);
-let days = Number(document.getElementById("days").value);
+          <div class="field">
+            <label for="fatigue">Vermoeidheid stijgt?
+              <span class="hint">Ja of nee</span>
+            </label>
+            <select id="fatigue">
+              <option value="" selected disabled>Kies</option>
+              <option value="nee">nee</option>
+              <option value="ja">ja</option>
+            </select>
+          </div>
+        </div>
 
-let readiness =
-(bb*0.4)+(sleep*0.3)+(hrv*0.2)+((100-stress)*0.1);
+        <div class="divider"></div>
 
-let verdict="";
-let color="";
-let action="";
+        <div class="section-title">Belasting</div>
+        <div class="grid two">
+          <div class="field">
+            <label for="days">Dagen op rij getraind
+              <span class="hint">0 tot 4+</span>
+            </label>
+            <select id="days">
+              <option value="" selected disabled>Kies dagen</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4+</option>
+            </select>
+          </div>
 
-if(days>=3 || readiness<60){
-verdict="BEWUST LICHT";
-color="mid";
-action="20–25 min rustige zone 2";
-}
-else{
-verdict="OPBOUW";
-color="good";
-action="30–40 min zone 2";
-}
+          <div class="field">
+            <label for="heavy">Gisteren zwaar?
+              <span class="hint">Zware training gisteren?</span>
+            </label>
+            <select id="heavy">
+              <option value="" selected disabled>Kies</option>
+              <option value="nee">nee</option>
+              <option value="ja">ja</option>
+            </select>
+          </div>
 
-document.getElementById("result").innerHTML=`
+          <div class="field">
+            <label for="trend">Trend laatste 3 dagen
+              <span class="hint">Beter, stabiel of slechter?</span>
+            </label>
+            <select id="trend">
+              <option value="" selected disabled>Kies trend</option>
+              <option value="beter">beter</option>
+              <option value="stabiel">stabiel</option>
+              <option value="slechter">slechter</option>
+            </select>
+          </div>
 
-<div class="card">
+          <div class="field">
+            <label for="followed">Advies gevolgd?
+              <span class="hint">Heb je gisteren geluisterd?</span>
+            </label>
+            <select id="followed">
+              <option value="" selected disabled>Kies</option>
+              <option value="ja">ja</option>
+              <option value="nee">nee</option>
+            </select>
+          </div>
+        </div>
 
-<div class="verdict ${color}">
-${verdict}
-</div>
+        <button class="btn" onclick="bereken()">Bepaal mijn dag</button>
+      </div>
+    </div>
 
-<div class="block">
-<div class="title">Vandaag</div>
-<div class="big">${action}</div>
-Niet meer.
-</div>
+    <!-- SCHERM 2: RESULTAAT -->
+    <div id="screen-result" class="screen">
+      <div id="result-content"></div>
+      <button class="btn secondary" onclick="terugNaarInvullen()">Wijzig invoer</button>
+    </div>
+  </div>
 
-<div class="block">
-<div class="title">Coach</div>
-Minder doen is vandaag juist.
-</div>
+  <script>
+    function clamp(x, min, max){
+      return Math.max(min, Math.min(max, x));
+    }
 
-</div>
-`;
+    function getNumber(id){
+      const raw = document.getElementById(id).value;
+      if (raw === "" || raw === null) return null;
+      const num = Number(raw);
+      if (Number.isNaN(num)) return null;
+      return num;
+    }
 
+    function getValue(id){
+      const value = document.getElementById(id).value;
+      return value === "" ? null : value;
+    }
 
-// 🔥 KEY: FORM VERBERGEN
-document.getElementById("form").classList.add("hidden");
+    function hrvToScore(hrv){
+      if (hrv >= 75) return 92;
+      if (hrv >= 65) return 84;
+      if (hrv >= 55) return 76;
+      if (hrv >= 45) return 66;
+      if (hrv >= 35) return 52;
+      return 38;
+    }
 
-// 🔥 SCROLL NAAR BOVEN
-window.scrollTo({top:0,behavior:"smooth"});
+    function berekenReadiness(bb, sleep, hrv, stress){
+      return Math.round(
+        (bb * 0.40) +
+        (sleep * 0.30) +
+        (hrvToScore(hrv) * 0.20) +
+        ((100 - stress) * 0.10)
+      );
+    }
 
-}
-</script>
+    function berekenBelasting(data){
+      let score = 0;
 
+      if (data.days >= 3) score += 2;
+      if (data.heavy === "ja") score += 2;
+      if (data.trend === "dalend") score += 2;
+      if (data.trend === "stabiel") score += 1;
+      if (data.followed === "nee") score += 1;
+      if (data.fatigue === "ja") score += 2;
+
+      return score;
+    }
+
+    function bepaalDag(data){
+      const readiness = berekenReadiness(data.bb, data.sleep, data.hrv, data.stress);
+      const belasting = berekenBelasting(data);
+
+      let correctedReadiness = readiness;
+
+      if (data.gevoel === "goed") correctedReadiness += 4;
+      if (data.gevoel === "slecht") correctedReadiness -= 10;
+
+      if (data.lichaam === "fris") correctedReadiness += 3;
+      if (data.lichaam === "stijf") correctedReadiness -= 6;
+      if (data.lichaam === "moe") correctedReadiness -= 14;
+
+      if (data.darmen === "traag") correctedReadiness -= 4;
+      if (data.darmen === "slecht") correctedReadiness -= 10;
+
+      correctedReadiness = clamp(Math.round(correctedReadiness), 0, 100);
+
+      let verdict = "";
+      let verdictClass = "mid";
+      let reason = "";
+      let alert = "";
+      let action = "";
+      let limit = "";
+      let coach = "";
+      let tomorrow = "";
+      let zone = "";
+      let steps = "";
+      let daytype = "";
+
+      if (data.stress > 45) {
+        verdict = "AFREMMEN";
+        verdictClass = "bad";
+        reason = "Stress ligt te hoog.";
+        alert = "Vandaag geen extra trainingsdruk.";
+        action = "20–30 min rustig wandelen.";
+        limit = "geen training, geen intensiteit";
+        coach = "Vandaag rem je. Niet onderhandelen.";
+        tomorrow = "Alleen remmen houdt morgen bruikbaar.";
+        zone = "zone 1";
+        steps = "6000–7500";
+        daytype = "afremmen";
+      }
+      else if (data.darmen === "slecht") {
+        verdict = "HERSTELDAG";
+        verdictClass = "bad";
+        reason = "Buik is vandaag de beperkende factor.";
+        alert = "Vandaag buik eerst, training niet.";
+        action = "Korte rustige wandeling of niets.";
+        limit = "geen training";
+        coach = "Vandaag simpel houden.";
+        tomorrow = "Rust vandaag voorkomt extra last morgen.";
+        zone = "zone 1";
+        steps = "5000–7000";
+        daytype = "herstel";
+      }
+      else if (correctedReadiness < 40 || belasting >= 5) {
+        verdict = "HERSTELDAG";
+        verdictClass = "bad";
+        reason = "Herstel en belasting zitten te ver uit elkaar.";
+        alert = "Vandaag verplicht lager.";
+        action = "Rust of korte rustige wandeling.";
+        limit = "geen trainingsprikkel";
+        coach = "Vandaag niet trainen om fit te lijken. Vandaag herstellen.";
+        tomorrow = "Herstel vandaag is je snelste weg naar een betere morgen.";
+        zone = "zone 1";
+        steps = "6000–7500";
+        daytype = "herstel";
+      }
+      else if (correctedReadiness < 60 || belasting >= 3) {
+        verdict = "BEWUST LICHT";
+        verdictClass = "mid";
+        reason = "Opstapeling begint te tellen.";
+        alert = "Vandaag stuur je bij.";
+        action = "20–25 min rustige zone 2 (ochtend).";
+        limit = "geen versnelling, geen verlenging, geen tweede training";
+        coach = "Minder doen is vandaag juist.";
+        tomorrow = "Vandaag terugnemen geeft morgen opnieuw ruimte.";
+        zone = "lage zone 2";
+        steps = "7000–8500";
+        daytype = "licht actief";
+      }
+      else if (correctedReadiness < 75) {
+        verdict = "ONDERHOUD";
+        verdictClass = "mid";
+        reason = "Je zit goed genoeg om te bewegen, niet om te pushen.";
+        alert = "Vandaag gecontroleerd trainen.";
+        action = "25–35 min zone 2.";
+        limit = "geen extra belasting";
+        coach = "Hou het stabiel. Vandaag niet forceren.";
+        tomorrow = "Stabiliteit houdt je progressie vast.";
+        zone = "zone 2";
+        steps = "7500–9000";
+        daytype = "onderhoud";
+      }
+      else {
+        verdict = "OPBOUW";
+        verdictClass = "good";
+        reason = "Herstel laat een gecontroleerde prikkel toe.";
+        alert = "Vandaag mag je opbouwen.";
+        action = "30–40 min zone 2 + eventueel lichte kracht.";
+        limit = "controle houden";
+        coach = "Goede dag om te bouwen, maar blijf gedoseerd.";
+        tomorrow = "Goede prikkel vandaag kan echte vooruitgang geven.";
+        zone = "zone 2";
+        steps = "8000–10000";
+        daytype = "opbouw";
+      }
+
+      return {
+        correctedReadiness,
+        verdict,
+        verdictClass,
+        reason,
+        alert,
+        action,
+        limit,
+        coach,
+        tomorrow,
+        zone,
+        steps,
+        daytype
+      };
+    }
+
+    function toonError(tekst){
+      document.getElementById("form-error").innerHTML = `
+        <div class="error">${tekst}</div>
+      `;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clearError(){
+      document.getElementById("form-error").innerHTML = "";
+    }
+
+    function toonScherm(id){
+      document.getElementById("screen-form").classList.remove("active");
+      document.getElementById("screen-result").classList.remove("active");
+      document.getElementById(id).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function terugNaarInvullen(){
+      toonScherm("screen-form");
+    }
+
+    function bereken(){
+      clearError();
+
+      const bb = getNumber("bb");
+      const sleep = getNumber("sleep");
+      const hrv = getNumber("hrv");
+      const stress = getNumber("stress");
+
+      const gevoel = getValue("gevoel");
+      const lichaam = getValue("lichaam");
+      const darmen = getValue("darmen");
+      const fatigue = getValue("fatigue");
+      const days = getValue("days");
+      const heavy = getValue("heavy");
+      const trend = getValue("trend");
+      const followed = getValue("followed");
+
+      if (
+        bb === null || sleep === null || hrv === null || stress === null ||
+        gevoel === null || lichaam === null || darmen === null || fatigue === null ||
+        days === null || heavy === null || trend === null || followed === null
+      ) {
+        toonError("Vul eerst alle velden in. De app beslist pas als alles ingevuld is.");
+        return;
+      }
+
+      const data = {
+        bb: clamp(bb, 0, 100),
+        sleep: clamp(sleep, 0, 100),
+        hrv: clamp(hrv, 0, 120),
+        stress: clamp(stress, 0, 100),
+        gevoel,
+        lichaam,
+        darmen,
+        fatigue,
+        days: days === "4" ? 4 : parseInt(days),
+        heavy,
+        trend: trend === "slechter" ? "dalend" : trend,
+        followed
+      };
+
+      const r = bepaalDag(data);
+
+      document.getElementById("result-content").innerHTML = `
+        <div class="card">
+          <div class="pill">Dagsturing</div>
+
+          <div class="verdict ${r.verdictClass}">
+            ${r.verdict}
+          </div>
+
+          <div class="block">
+            <div class="kicker">Belangrijkste reden</div>
+            <div class="text">${r.reason}</div>
+          </div>
+
+          <div class="alert">${r.alert}</div>
+
+          <div class="block">
+            <div class="kicker">Vandaag</div>
+            <div class="main">${r.action}</div>
+            <div class="not-more">Niet meer.</div>
+          </div>
+
+          <div class="block">
+            <div class="kicker">Harde grens</div>
+            <div class="text">${r.limit}</div>
+          </div>
+
+          <div class="block">
+            <div class="kicker">Coach</div>
+            <div class="text">${r.coach}</div>
+          </div>
+
+          <div class="block">
+            <div class="kicker">Impact op morgen</div>
+            <div class="text">${r.tomorrow}</div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <small>Readiness</small>
+              <b>${r.correctedReadiness}</b>
+            </div>
+            <div class="stat">
+              <small>Zone</small>
+              <b>${r.zone}</b>
+            </div>
+            <div class="stat">
+              <small>Stappen</small>
+              <b>${r.steps}</b>
+            </div>
+            <div class="stat">
+              <small>Dagtype</small>
+              <b>${r.daytype}</b>
+            </div>
+          </div>
+        </div>
+      `;
+
+      toonScherm("screen-result");
+    }
+  </script>
 </body>
 </html>
