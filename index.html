@@ -1,599 +1,296 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f3f4f6" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Coach RDM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach RDM</title>
 
-  <style>
-    :root{
-      --bg:#f3f4f6;
-      --card:#ffffff;
-      --text:#111111;
-      --muted:#6b7280;
-      --line:#e5e7eb;
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont;
+  background:#f3f4f6;
+  color:#111;
+}
 
-      --chip:#ececec;
-      --chip-on:#111111;
-      --chip-on-text:#ffffff;
+.wrap{
+  max-width:720px;
+  margin:auto;
+  padding:16px;
+}
 
-      --good:#dff7e6;
-      --warn:#fff1cc;
-      --bad:#ffe0e0;
+h1{
+  font-size:34px;
+  font-weight:900;
+  margin:0;
+}
 
-      --shadow:0 8px 20px rgba(0,0,0,0.05);
-      --radius:18px;
-    }
+.sub{
+  color:#6b7280;
+  margin:4px 0 18px;
+  font-weight:600;
+}
 
-    *{
-      box-sizing:border-box;
-    }
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+}
 
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
+label{
+  font-weight:700;
+  display:block;
+  margin-top:10px;
+}
 
-    .wrap{
-      max-width:860px;
-      margin:0 auto;
-      padding:18px 16px 40px;
-    }
+input,select{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:18px;
+  margin-top:4px;
+}
 
-    h1{
-      margin:0 0 6px;
-      font-size:34px;
-      line-height:1.05;
-      font-weight:900;
-      letter-spacing:-0.6px;
-    }
+.chips{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
 
-    .subtitle{
-      margin:0 0 18px;
-      color:var(--muted);
-      font-size:17px;
-      line-height:1.35;
-      font-weight:650;
-    }
+.chip{
+  padding:10px 14px;
+  border-radius:999px;
+  background:#e5e7eb;
+  border:none;
+  font-weight:800;
+}
 
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      padding:18px;
-      margin-bottom:16px;
-      box-shadow:var(--shadow);
-    }
+.active{
+  background:#111;
+  color:#fff;
+}
 
-    .section-title{
-      margin:0 0 12px;
-      font-size:20px;
-      font-weight:850;
-    }
+.btn{
+  width:100%;
+  margin-top:14px;
+  padding:16px;
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-size:20px;
+  font-weight:900;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
+.verdict{
+  padding:18px;
+  border-radius:16px;
+  font-size:24px;
+  font-weight:900;
+}
 
-    @media (min-width:720px){
-      .grid.two{
-        grid-template-columns:1fr 1fr;
-      }
-    }
+.good{background:#dff7e6;}
+.mid{background:#fff1cc;}
+.bad{background:#ffe0e0;}
 
-    label{
-      display:block;
-      margin:0 0 6px;
-      font-size:16px;
-      font-weight:760;
-    }
+.action{
+  margin-top:12px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid #e5e7eb;
+}
 
-    input, select{
-      width:100%;
-      padding:14px 14px;
-      border-radius:14px;
-      border:1px solid #d1d5db;
-      background:#fff;
-      color:#111;
-      font-size:18px;
-      appearance:none;
-      -webkit-appearance:none;
-    }
+.do{
+  font-size:32px;
+  font-weight:900;
+}
 
-    .divider{
-      height:1px;
-      background:var(--line);
-      margin:14px 0;
-    }
+.dont{
+  margin-top:10px;
+  color:#6b7280;
+  font-weight:700;
+}
 
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:6px;
-    }
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
 
-    .chip{
-      border:none;
-      background:var(--chip);
-      color:#111;
-      padding:12px 16px;
-      border-radius:999px;
-      font-size:17px;
-      font-weight:800;
-      cursor:pointer;
-      min-width:92px;
-      text-align:center;
-    }
+.stat{
+  background:#f9fafb;
+  padding:12px;
+  border-radius:12px;
+}
 
-    .chip.active{
-      background:var(--chip-on);
-      color:var(--chip-on-text);
-    }
+.stat small{
+  color:#6b7280;
+}
 
-    .btn{
-      width:100%;
-      border:none;
-      border-radius:16px;
-      padding:18px 18px;
-      background:#111111;
-      color:#ffffff;
-      font-size:20px;
-      font-weight:850;
-      cursor:pointer;
-      margin-top:8px;
-    }
-
-    .result-shell{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    .decision{
-      border-radius:18px;
-      padding:18px;
-      font-size:28px;
-      line-height:1.2;
-      font-weight:900;
-    }
-
-    .decision.good{ background:var(--good); }
-    .decision.warn{ background:var(--warn); }
-    .decision.bad{ background:var(--bad); }
-
-    .action-card{
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      background:#fff;
-    }
-
-    .action-label{
-      font-size:14px;
-      color:var(--muted);
-      font-weight:900;
-      letter-spacing:0.5px;
-      margin-bottom:8px;
-      text-transform:uppercase;
-    }
-
-    .action-main{
-      font-size:34px;
-      line-height:1.12;
-      font-weight:900;
-      margin-bottom:14px;
-    }
-
-    .action-sub{
-      font-size:18px;
-      line-height:1.4;
-      color:var(--muted);
-      font-weight:700;
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      opacity:0.88;
-    }
-
-    @media (min-width:720px){
-      .stats{
-        grid-template-columns:repeat(4,1fr);
-      }
-    }
-
-    .stat{
-      background:#f8f9fb;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-    }
-
-    .stat-k{
-      font-size:13px;
-      color:var(--muted);
-      font-weight:750;
-      margin-bottom:6px;
-    }
-
-    .stat-v{
-      font-size:28px;
-      line-height:1;
-      font-weight:900;
-    }
-
-    .mini{
-      font-size:17px;
-      line-height:1.35;
-      font-weight:800;
-    }
-
-    .input-note{
-      margin-top:8px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.4;
-      font-weight:650;
-    }
-
-    .empty{
-      color:var(--muted);
-      font-size:18px;
-      font-weight:700;
-    }
-  </style>
+.stat b{
+  display:block;
+  font-size:22px;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>🔥 Coach RDM</h1>
-    <div class="subtitle">Ochtend eerst. Jij vult in, de coach beslist.</div>
 
-    <div class="card">
-      <div class="section-title">Garmin</div>
-      <div class="grid two">
-        <div>
-          <label for="bb">Body Battery</label>
-          <input id="bb" type="number" min="0" max="100" value="63" />
-        </div>
-        <div>
-          <label for="sleep">Slaapscore</label>
-          <input id="sleep" type="number" min="0" max="100" value="69" />
-        </div>
-        <div>
-          <label for="hrv">HRV (ochtendsnapshot)</label>
-          <input id="hrv" type="number" min="0" max="120" value="53" />
-        </div>
-        <div>
-          <label for="stress">Stress</label>
-          <input id="stress" type="number" min="0" max="100" value="20" />
-        </div>
-      </div>
+<div class="wrap">
 
-      <div class="divider"></div>
+<h1>🔥 Coach RDM</h1>
+<div class="sub">Ochtend eerst. Jij vult in, de coach beslist.</div>
 
-      <div class="section-title">Check-in</div>
-      <div class="grid two">
-        <div>
-          <label for="gevoel">Gevoel</label>
-          <select id="gevoel">
-            <option value="slecht">slecht</option>
-            <option value="ok" selected>ok</option>
-            <option value="goed">goed</option>
-          </select>
-        </div>
+<div class="card">
 
-        <div>
-          <label for="lichaam">Lichaam</label>
-          <select id="lichaam">
-            <option value="moe">moe</option>
-            <option value="stijf">stijf</option>
-            <option value="fris" selected>fris</option>
-          </select>
-        </div>
+<label>Body Battery</label>
+<input id="bb" value="63">
 
-        <div>
-          <label for="darmen">Darmen</label>
-          <select id="darmen">
-            <option value="goed" selected>goed</option>
-            <option value="traag">traag</option>
-            <option value="slecht">slecht</option>
-          </select>
-        </div>
-      </div>
+<label>Slaapscore</label>
+<input id="sleep" value="69">
 
-      <div class="divider"></div>
+<label>HRV</label>
+<input id="hrv" value="53">
 
-      <div class="section-title">Momenten die vandaag mogelijk zijn</div>
-      <div class="chips">
-        <button class="chip active" type="button" data-group="moment" data-value="ochtend">ochtend</button>
-        <button class="chip active" type="button" data-group="moment" data-value="middag">middag</button>
-        <button class="chip active" type="button" data-group="moment" data-value="avond">avond</button>
-      </div>
-      <div class="input-note">Ochtend krijgt altijd voorrang als die mogelijk is.</div>
+<label>Stress</label>
+<input id="stress" value="20">
 
-      <div class="divider"></div>
+<label>Gevoel</label>
+<select id="gevoel">
+<option>slecht</option>
+<option selected>ok</option>
+<option>goed</option>
+</select>
 
-      <div class="section-title">Duur die vandaag mogelijk is</div>
-      <div class="chips">
-        <button class="chip active" type="button" data-group="duur" data-value="20">20</button>
-        <button class="chip active" type="button" data-group="duur" data-value="30">30</button>
-        <button class="chip active" type="button" data-group="duur" data-value="45">45</button>
-        <button class="chip" type="button" data-group="duur" data-value="60">60</button>
-      </div>
+<label>Lichaam</label>
+<select id="lichaam">
+<option>moe</option>
+<option>stijf</option>
+<option selected>fris</option>
+</select>
 
-      <button class="btn" onclick="bereken()">Wat vandaag?</button>
-    </div>
+<label>Darmen</label>
+<select id="darmen">
+<option selected>goed</option>
+<option>traag</option>
+<option>slecht</option>
+</select>
 
-    <div class="card">
-      <div id="result" class="empty">Nog niets berekend.</div>
-    </div>
-  </div>
+<label>Momenten</label>
+<div class="chips">
+<button class="chip active" onclick="toggle(this)">ochtend</button>
+<button class="chip active" onclick="toggle(this)">middag</button>
+<button class="chip active" onclick="toggle(this)">avond</button>
+</div>
 
-  <script>
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => chip.classList.toggle('active'));
-    });
+<label>Duur</label>
+<div class="chips">
+<button class="chip active" onclick="toggle(this)">20</button>
+<button class="chip active" onclick="toggle(this)">30</button>
+<button class="chip active" onclick="toggle(this)">45</button>
+<button class="chip" onclick="toggle(this)">60</button>
+</div>
 
-    function clamp(x, min, max){
-      return Math.max(min, Math.min(max, x));
-    }
+<button class="btn" onclick="run()">Wat vandaag?</button>
 
-    function getSelected(group){
-      return [...document.querySelectorAll(`.chip[data-group="${group}"].active`)]
-        .map(el => el.dataset.value);
-    }
+</div>
 
-    function hrvToScore(hrv){
-      if(hrv >= 75) return 92;
-      if(hrv >= 65) return 84;
-      if(hrv >= 55) return 76;
-      if(hrv >= 45) return 66;
-      if(hrv >= 35) return 52;
-      return 38;
-    }
+<div class="card" id="result">Nog niets berekend</div>
 
-    function chooseMoment(available){
-      if(available.includes("ochtend")) return "ochtend";
-      if(available.includes("middag")) return "middag";
-      if(available.includes("avond")) return "avond";
-      return "ochtend";
-    }
+</div>
 
-    function chooseDuration(available, readiness, moment, darmen, lichaam){
-      const nums = available.map(Number).sort((a,b) => a-b);
-      if(nums.length === 0) return 20;
+<script>
 
-      // darmproblemen: kort houden
-      if(darmen === "slecht"){
-        if(nums.includes(20)) return 20;
-        if(nums.includes(30)) return 30;
-        return nums[0];
-      }
+function toggle(el){
+  el.classList.toggle("active")
+}
 
-      // moe of stijf: niet te lang
-      if(lichaam === "moe"){
-        if(nums.includes(20)) return 20;
-        if(nums.includes(30)) return 30;
-        return nums[0];
-      }
+function run(){
 
-      // avond: duidelijk afremmen
-      if(moment === "avond"){
-        if(readiness < 75){
-          if(nums.includes(20)) return 20;
-          if(nums.includes(30)) return 30;
-          return nums[0];
-        }
-        if(nums.includes(30)) return 30;
-        if(nums.includes(45)) return 45;
-        if(nums.includes(20)) return 20;
-        return nums[0];
-      }
+let bb=+bb.value
+let sleep=+sleep.value
+let hrv=+hrv.value
+let stress=+stress.value
 
-      // ochtend: standaard voorkeur
-      if(moment === "ochtend"){
-        if(readiness < 50){
-          if(nums.includes(20)) return 20;
-          return nums[0];
-        }
-        if(readiness < 62){
-          if(nums.includes(20)) return 20;
-          if(nums.includes(30)) return 30;
-          return nums[0];
-        }
-        if(readiness < 74){
-          if(nums.includes(30)) return 30;
-          if(nums.includes(45)) return 45;
-          if(nums.includes(20)) return 20;
-          return nums[0];
-        }
-        if(nums.includes(45)) return 45;
-        if(nums.includes(30)) return 30;
-        if(nums.includes(60)) return 60;
-        if(nums.includes(20)) return 20;
-        return nums[0];
-      }
+let score = (bb*0.3)+(sleep*0.25)+(hrv*0.25)+((100-stress)*0.2)
 
-      // middag
-      if(readiness < 50){
-        if(nums.includes(20)) return 20;
-        return nums[0];
-      }
-      if(readiness < 62){
-        if(nums.includes(30)) return 30;
-        if(nums.includes(20)) return 20;
-        return nums[0];
-      }
-      if(readiness < 74){
-        if(nums.includes(45)) return 45;
-        if(nums.includes(30)) return 30;
-        if(nums.includes(20)) return 20;
-        return nums[0];
-      }
-      if(nums.includes(45)) return 45;
-      if(nums.includes(60)) return 60;
-      if(nums.includes(30)) return 30;
-      if(nums.includes(20)) return 20;
-      return nums[0];
-    }
+if(gevoel.value=="goed") score+=5
+if(gevoel.value=="slecht") score-=10
 
-    function calculateReadiness(bb, sleep, hrv, stress, gevoel, lichaam, darmen){
-      let readiness = Math.round(
-        (bb * 0.30) +
-        (sleep * 0.25) +
-        (hrvToScore(hrv) * 0.25) +
-        ((100 - stress) * 0.20)
-      );
+if(lichaam.value=="moe") score-=10
+if(lichaam.value=="stijf") score-=5
 
-      if(gevoel === "goed") readiness += 5;
-      if(gevoel === "slecht") readiness -= 10;
+if(darmen.value=="slecht") score-=8
+if(darmen.value=="traag") score-=4
 
-      if(lichaam === "fris") readiness += 3;
-      if(lichaam === "stijf") readiness -= 5;
-      if(lichaam === "moe") readiness -= 10;
+score=Math.max(0,Math.min(100,Math.round(score)))
 
-      if(darmen === "traag") readiness -= 4;
-      if(darmen === "slecht") readiness -= 8;
+let moment = [...document.querySelectorAll('.chip.active')]
+.map(x=>x.innerText)
 
-      return clamp(readiness, 0, 100);
-    }
+let tijd="ochtend"
+if(!moment.includes("ochtend")){
+  tijd = moment.includes("middag") ? "middag":"avond"
+}
 
-    function getPlan(readiness, moment, duur, stress, hrv, sleep, lichaam, darmen){
-      let dagtype = "";
-      let verdict = "";
-      let doen = "";
-      let nietDoen = "";
-      let stappen = "";
+let dur=[...document.querySelectorAll('.chip.active')]
+.map(x=>x.innerText).filter(x=>!isNaN(x))
 
-      if(readiness < 50){
-        dagtype = "🔴 Stop";
-        verdict = "Herstel. Niet trainen.";
-        doen = `${duur} min rustig wandelen (${moment}) of volledige rust`;
-        nietDoen = "geen training";
-        stappen = "5000–6500";
-      }
-      else if(readiness < 62){
-        dagtype = "🟠 Herstel";
-        verdict = "Bewegen ok. Training niet.";
-        doen = `${duur} min rustig bewegen (${moment})`;
-        nietDoen = "geen intensiteit";
-        stappen = "6500–8000";
-      }
-      else if(readiness < 74){
-        dagtype = "🟢 Licht actief";
-        verdict = "Train, maar gecontroleerd.";
-        doen = `${duur} min zone 2 (${moment})`;
-        nietDoen = "niet tot uitputting";
-        stappen = "7500–9000";
-      }
-      else{
-        dagtype = "🔵 Train";
-        verdict = "Groen licht.";
-        doen = `${duur} min training (${moment})`;
-        nietDoen = "niet overdrijven";
-        stappen = "9000–11000";
-      }
+let d=dur.map(Number).sort((a,b)=>a-b)
 
-      if(stress > 40){
-        verdict += " Stress hoog.";
-      } else if(stress <= 20 && readiness >= 62 && readiness < 74){
-        verdict += " Stress laag.";
-      }
+let duur=20
 
-      if(hrv < 40){
-        verdict += " HRV laag.";
-      }
+if(score>75 && d.includes(45)) duur=45
+else if(score>60 && d.includes(30)) duur=30
+else duur=d[0]
 
-      if(sleep < 60){
-        verdict += " Slaap remt af.";
-      }
+let verdict=""
+let kleur="mid"
 
-      if(lichaam === "stijf"){
-        doen += " + 5 min mobiliteit";
-      }
+if(score<50){
+  verdict="STOP. Herstel."
+  kleur="bad"
+}
+else if(score<65){
+  verdict="Rustig bewegen."
+}
+else if(score<75){
+  verdict="Train gecontroleerd."
+}
+else{
+  verdict="Go."
+  kleur="good"
+}
 
-      if(darmen === "traag"){
-        doen += " met vlotte cadans";
-      }
+let actie=`${duur} min zone 2 (${tijd})`
+let dont="niet tot uitputting"
 
-      if(darmen === "slecht"){
-        verdict += " Hou het simpel.";
-      }
+if(score<50){
+  actie="wandelen of rust"
+  dont="geen training"
+}
 
-      return { dagtype, verdict, doen, nietDoen, stappen };
-    }
+document.getElementById("result").innerHTML=`
+<div class="verdict ${kleur}">${verdict}</div>
 
-    function getBandClass(readiness){
-      if(readiness >= 75) return "good";
-      if(readiness >= 60) return "warn";
-      return "bad";
-    }
+<div class="action">
+<div class="do">${actie}</div>
+<div class="dont">${dont}</div>
+</div>
 
-    function bereken(){
-      const bb = clamp(Number(document.getElementById("bb").value), 0, 100);
-      const sleep = clamp(Number(document.getElementById("sleep").value), 0, 100);
-      const hrv = clamp(Number(document.getElementById("hrv").value), 0, 120);
-      const stress = clamp(Number(document.getElementById("stress").value), 0, 100);
+<div class="stats">
+<div class="stat"><small>Readiness</small><b>${score}</b></div>
+<div class="stat"><small>Moment</small><b>${tijd}</b></div>
+</div>
+`
 
-      const gevoel = document.getElementById("gevoel").value;
-      const lichaam = document.getElementById("lichaam").value;
-      const darmen = document.getElementById("darmen").value;
+}
 
-      let moments = getSelected("moment");
-      let durations = getSelected("duur");
+</script>
 
-      if(moments.length === 0) moments = ["ochtend","middag","avond"];
-      if(durations.length === 0) durations = ["20","30"];
-
-      const readiness = calculateReadiness(bb, sleep, hrv, stress, gevoel, lichaam, darmen);
-      const moment = chooseMoment(moments);
-      const duur = chooseDuration(durations, readiness, moment, darmen, lichaam);
-      const plan = getPlan(readiness, moment, duur, stress, hrv, sleep, lichaam, darmen);
-      const bandClass = getBandClass(readiness);
-
-      document.getElementById("result").innerHTML = `
-        <div class="result-shell">
-          <div class="decision ${bandClass}">
-            ${plan.verdict}
-          </div>
-
-          <div class="action-card">
-            <div class="action-label">Doen</div>
-            <div class="action-main">${plan.doen}</div>
-            <div class="action-label">Niet doen</div>
-            <div class="action-sub">${plan.nietDoen}</div>
-          </div>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-k">Readiness</div>
-              <div class="stat-v">${readiness}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-k">Dagtype</div>
-              <div class="stat-v mini">${plan.dagtype}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-k">Moment</div>
-              <div class="stat-v mini">${moment}</div>
-            </div>
-            <div class="stat">
-              <div class="stat-k">Stappen</div>
-              <div class="stat-v mini">${plan.stappen}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-  </script>
 </body>
 </html>
