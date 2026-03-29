@@ -42,9 +42,9 @@
     h1{
       margin:0 0 6px;
       font-size:34px;
-      line-height:1.05;
+      line-height:1.02;
       font-weight:900;
-      letter-spacing:-0.6px;
+      letter-spacing:-0.7px;
     }
 
     .sub{
@@ -123,7 +123,7 @@
       padding:18px;
       border-radius:16px;
       font-size:24px;
-      line-height:1.15;
+      line-height:1.12;
       font-weight:900;
       text-align:center;
       margin-bottom:12px;
@@ -162,9 +162,8 @@
 
     .main{
       font-size:30px;
-      line-height:1.1;
+      line-height:1.08;
       font-weight:900;
-      margin-bottom:8px;
     }
 
     .text{
@@ -325,6 +324,40 @@
       return 38;
     }
 
+    function coachUitleg(verdict, days, heavy, stress, darmen){
+      if(verdict === "BEWUST LICHT"){
+        return "Je zit niet slecht, maar de opeenstapeling van training begint te tellen. Vandaag bewust onder je limiet blijven.";
+      }
+      if(verdict === "LICHT TRAINEN"){
+        return "Je zit in een stabiele opbouwfase. Goed genoeg om te bewegen, niet om te pushen.";
+      }
+      if(verdict === "GOED OM TE TRAINEN"){
+        return "Je lichaam is klaar voor een gecontroleerde trainingsprikkel.";
+      }
+      if(verdict === "HERSTELDAG"){
+        return "Vandaag levert rustiger bewegen meer op dan extra belasting.";
+      }
+      if(verdict === "STOP"){
+        return "Vandaag is herstel de beste keuze.";
+      }
+      if(verdict === "AFREMMEN"){
+        return "Je systeem staat onder druk. Alles forceren werkt vandaag tegen je.";
+      }
+      if(stress > 45){
+        return "Je stress ligt te hoog om nuttig te trainen.";
+      }
+      if(darmen === "slecht"){
+        return "Je buik is vandaag de beperkende factor.";
+      }
+      if(days >= 3){
+        return "De optelsom van de voorbije dagen weegt door.";
+      }
+      if(heavy === "ja"){
+        return "Gisteren zat al genoeg prikkel. Vandaag hou je het lager.";
+      }
+      return "Vandaag gecontroleerd blijven.";
+    }
+
     function bereken(){
       const bb = clamp(parseInt(document.getElementById("bb").value) || 0, 0, 100);
       const sleep = clamp(parseInt(document.getElementById("sleep").value) || 0, 0, 100);
@@ -338,14 +371,12 @@
       const days = parseInt(document.getElementById("days").value) || 0;
       const heavy = document.getElementById("heavy").value;
 
-      // basisscore
       let score =
         (bb * 0.30) +
         (sleep * 0.25) +
         (hrvToScore(hrv) * 0.25) +
         ((100 - stress) * 0.20);
 
-      // subjectieve correcties
       if(gevoel === "goed") score += 5;
       if(gevoel === "slecht") score -= 10;
 
@@ -356,7 +387,6 @@
       if(darmen === "traag") score -= 4;
       if(darmen === "slecht") score -= 10;
 
-      // belasting
       if(days === 2) score -= 5;
       if(days === 3) score -= 12;
       if(days >= 4) score -= 18;
@@ -369,71 +399,56 @@
       let verdictClass = "mid";
       let doen = "";
       let niet = "";
-      let waarom = "";
       let zone = "";
       let stappen = "";
       let dagtype = "";
       let rodeVlag = "";
 
-      // 1. harde remregels
       if(stress > 45){
         verdict = "AFREMMEN";
         verdictClass = "bad";
         doen = "20–30 min rustig wandelen (ochtend)";
         niet = "geen training";
-        waarom = "stress ligt te hoog";
         zone = "zone 1";
         stappen = "6000–7500";
         dagtype = "afremmen";
         rodeVlag = "Stress te hoog. Vandaag niet doorduwen.";
       }
-
-      // 2. buik eerst
       else if(darmen === "slecht"){
-        verdict = "HERSTEL";
+        verdict = "HERSTELDAG";
         verdictClass = "bad";
         doen = "korte rustige wandeling (ochtend)";
         niet = "geen training";
-        waarom = "je systeem vraagt rust";
         zone = "zone 1";
         stappen = "5000–7000";
         dagtype = "herstel";
-        rodeVlag = "Buik niet goed. Hou het vandaag simpel.";
+        rodeVlag = "Buik niet goed. Vandaag simpel houden.";
       }
-
-      // 3. cumulatieve belasting
       else if(days >= 3){
         verdict = "BEWUST LICHT";
         verdictClass = "mid";
         doen = "20–25 min zone 2 (ochtend)";
         niet = "niet forceren, niet verlengen";
-        waarom = "meerdere dagen op rij getraind";
         zone = "lage zone 2";
         stappen = "7000–8500";
         dagtype = "licht actief";
         rodeVlag = "Cumulatieve belasting. Vandaag bewust lager houden.";
       }
-
-      // 4. gisteren zwaar
       else if(heavy === "ja" && score >= 60){
         verdict = "LICHT HOUDEN";
         verdictClass = "mid";
         doen = "20–25 min zone 2 (ochtend)";
         niet = "geen tweede zware prikkel";
-        waarom = "gisteren was al zwaar";
         zone = "lage zone 2";
         stappen = "7000–8500";
         dagtype = "licht actief";
         rodeVlag = "Gisteren was al zwaar. Vandaag onder controle blijven.";
       }
-
-      // 5. gewone scorelogica
       else if(score < 50){
         verdict = "STOP";
         verdictClass = "bad";
         doen = "rustdag";
         niet = "geen training";
-        waarom = "herstel nodig";
         zone = "zone 1";
         stappen = "5000–6500";
         dagtype = "herstel";
@@ -443,7 +458,6 @@
         verdictClass = "mid";
         doen = "20 min wandelen (ochtend)";
         niet = "geen intensiteit";
-        waarom = "lage paraatheid";
         zone = "zone 1";
         stappen = "6000–7500";
         dagtype = "herstel";
@@ -453,7 +467,6 @@
         verdictClass = "mid";
         doen = "25 min zone 2 (ochtend)";
         niet = "niet pushen";
-        waarom = "je zit in de opbouwzone";
         zone = "lage zone 2";
         stappen = "7000–8500";
         dagtype = "licht actief";
@@ -463,15 +476,16 @@
         verdictClass = "good";
         doen = "30–40 min zone 2 (ochtend)";
         niet = "geen tweede zware prikkel";
-        waarom = "je lichaam is klaar";
         zone = "zone 2";
         stappen = "7500–9500";
         dagtype = "trainbaar";
       }
 
-      if(lichaam === "stijf" && verdict !== "STOP" && verdict !== "AFREMMEN"){
+      if(lichaam === "stijf" && !["STOP","AFREMMEN","HERSTELDAG"].includes(verdict)){
         doen += " + mobiliteit";
       }
+
+      const uitleg = coachUitleg(verdict, days, heavy, stress, darmen);
 
       document.getElementById("result").innerHTML = `
         <div class="verdict ${verdictClass}">${verdict}</div>
@@ -479,18 +493,18 @@
         ${rodeVlag ? `<div class="flag">${rodeVlag}</div>` : ""}
 
         <div class="block">
-          <div class="kicker">Doen</div>
+          <div class="kicker">Vandaag</div>
           <div class="main">${doen}</div>
         </div>
 
         <div class="block">
-          <div class="kicker">Niet doen</div>
+          <div class="kicker">Hou dit in de gaten</div>
           <div class="text">${niet}</div>
         </div>
 
         <div class="block">
-          <div class="kicker">Waarom</div>
-          <div class="text">${waarom}</div>
+          <div class="kicker">Coach zegt</div>
+          <div class="text">${uitleg}</div>
         </div>
 
         <div class="stats">
