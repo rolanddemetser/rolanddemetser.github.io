@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Coach RDM</title>
 
 <style>
@@ -13,7 +14,7 @@ body{
 }
 
 .wrap{
-  max-width:720px;
+  max-width:700px;
   margin:auto;
   padding:16px;
 }
@@ -38,8 +39,8 @@ h1{
 
 label{
   font-weight:700;
-  margin-top:10px;
   display:block;
+  margin-top:10px;
 }
 
 input,select{
@@ -53,8 +54,8 @@ input,select{
 
 button{
   width:100%;
-  margin-top:14px;
   padding:16px;
+  margin-top:16px;
   background:#111;
   color:#fff;
   border:none;
@@ -74,20 +75,20 @@ button{
 .mid{background:#fff1cc;}
 .bad{background:#ffe0e0;}
 
-.action{
+.block{
   margin-top:12px;
-  padding:16px;
-  border-radius:16px;
+  padding:14px;
+  border-radius:14px;
   border:1px solid #e5e7eb;
 }
 
-.do{
+.big{
   font-size:28px;
   font-weight:900;
 }
 
-.dont{
-  margin-top:10px;
+.small{
+  margin-top:8px;
   color:#6b7280;
   font-weight:700;
 }
@@ -152,80 +153,92 @@ button{
 <option>slecht</option>
 </select>
 
-<button onclick="run()">Wat vandaag?</button>
+<button onclick="bereken()">Wat vandaag?</button>
 
 </div>
 
-<div class="card" id="result">Nog niets berekend</div>
+<div class="card" id="result">
+Nog niets berekend
+</div>
 
 </div>
 
 <script>
 
-function run(){
+function bereken(){
 
-let bb=+bb.value
-let sleep=+sleep.value
-let hrv=+hrv.value
-let stress=+stress.value
+let bb = parseInt(document.getElementById("bb").value) || 0
+let sleep = parseInt(document.getElementById("sleep").value) || 0
+let hrv = parseInt(document.getElementById("hrv").value) || 0
+let stress = parseInt(document.getElementById("stress").value) || 0
 
-let score = (bb*0.3)+(sleep*0.25)+(hrv*0.25)+((100-stress)*0.2)
+let gevoel = document.getElementById("gevoel").value
+let lichaam = document.getElementById("lichaam").value
+let darmen = document.getElementById("darmen").value
 
-if(gevoel.value=="goed") score+=5
-if(gevoel.value=="slecht") score-=10
+// score
+let score =
+(bb*0.3) +
+(sleep*0.25) +
+(hrv*0.25) +
+((100-stress)*0.2)
 
-if(lichaam.value=="moe") score-=12
-if(lichaam.value=="stijf") score-=6
+// correcties
+if(gevoel==="goed") score+=5
+if(gevoel==="slecht") score-=10
 
-if(darmen.value=="slecht") score-=8
-if(darmen.value=="traag") score-=4
+if(lichaam==="moe") score-=12
+if(lichaam==="stijf") score-=6
 
-score=Math.round(Math.max(0,Math.min(100,score)))
+if(darmen==="slecht") score-=8
+if(darmen==="traag") score-=4
 
-let verdict=""
-let kleur="mid"
-let actie=""
-let dont="niet tot uitputting"
-let duur=0
+score = Math.round(Math.max(0,Math.min(100,score)))
 
-// STRAKKE LOGICA
-if(score<55){
-  verdict="STOP"
-  kleur="bad"
-  actie="rust / korte wandeling"
-  dont="geen training"
+let verdict = ""
+let kleur = "mid"
+let actie = ""
+let niet = "niet tot uitputting"
+let moment = "ochtend"
+
+// LOGICA
+if(score < 55){
+  verdict = "STOP"
+  kleur = "bad"
+  actie = "rust / korte wandeling"
+  niet = "geen training"
 }
-else if(score<65){
-  verdict="HERSTEL"
-  actie="20 min wandelen of yoga"
+else if(score < 65){
+  verdict = "HERSTEL"
+  actie = "20 min wandelen of yoga"
 }
-else if(score<75){
-  verdict="TRAIN – licht"
-  actie="30 min zone 2 (ochtend)"
+else if(score < 75){
+  verdict = "TRAIN LICHT"
+  actie = "30 min zone 2"
 }
-else if(score<85){
-  verdict="TRAIN"
-  kleur="good"
-  actie="45 min zone 2 (ochtend)"
+else if(score < 85){
+  verdict = "TRAIN"
+  kleur = "good"
+  actie = "45 min zone 2"
 }
 else{
-  verdict="TOPDAG"
-  kleur="good"
-  actie="45–60 min (ochtend)"
+  verdict = "TOPDAG"
+  kleur = "good"
+  actie = "45–60 min training"
 }
 
 // extra veiligheid
-if(stress>40){
-  actie="korter trainen"
+if(stress > 40){
+  actie = "korter trainen"
 }
 
 // output
-document.getElementById("result").innerHTML=`
+document.getElementById("result").innerHTML = `
 <div class="verdict ${kleur}">${verdict}</div>
 
-<div class="action">
-<div class="do">${actie}</div>
-<div class="dont">${dont}</div>
+<div class="block">
+<div class="big">${actie} (${moment})</div>
+<div class="small">${niet}</div>
 </div>
 
 <div class="stats">
