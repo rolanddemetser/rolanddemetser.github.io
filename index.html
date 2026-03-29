@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f3f4f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Pro coach RDM</title>
+<title>Pro coach RDM – Level 2</title>
 
 <style>
   :root{
@@ -23,9 +23,7 @@
     --radius:18px;
   }
 
-  *{
-    box-sizing:border-box;
-  }
+  *{box-sizing:border-box}
 
   body{
     margin:0;
@@ -156,11 +154,16 @@
     margin-bottom:12px;
   }
 
-  .dont{
+  .text{
     font-size:18px;
     line-height:1.35;
     color:var(--muted);
     font-weight:750;
+    margin-bottom:12px;
+  }
+
+  .text:last-child{
+    margin-bottom:0;
   }
 
   .stats{
@@ -217,7 +220,7 @@
 <div class="wrap">
 
   <h1>🔥 Pro coach RDM</h1>
-  <div class="sub">Ochtend eerst. Jij vult in, de coach beslist.</div>
+  <div class="sub">Level 2. Ochtend eerst. Jij vult in, de coach bewaakt je belasting.</div>
 
   <div class="card">
     <div class="section-title">Garmin</div>
@@ -277,6 +280,31 @@
       </div>
     </div>
 
+    <div class="divider"></div>
+
+    <div class="section-title">Belastingbewaking</div>
+
+    <div class="grid two">
+      <div>
+        <label for="days">Dagen op rij getraind</label>
+        <select id="days">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4+</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="heavy">Gisteren zwaar getraind?</label>
+        <select id="heavy">
+          <option value="nee" selected>nee</option>
+          <option value="ja">ja</option>
+        </select>
+      </div>
+    </div>
+
     <button onclick="bereken()">Wat vandaag?</button>
   </div>
 
@@ -310,6 +338,9 @@ function bereken(){
   const lichaam = document.getElementById("lichaam").value;
   const darmen = document.getElementById("darmen").value;
 
+  const days = document.getElementById("days").value;
+  const heavy = document.getElementById("heavy").value;
+
   let score =
     (bb * 0.30) +
     (sleep * 0.25) +
@@ -326,6 +357,13 @@ function bereken(){
   if(darmen === "traag") score -= 4;
   if(darmen === "slecht") score -= 8;
 
+  // nieuwe Level 2 weekbewaking
+  if(days === "2") score -= 5;
+  if(days === "3") score -= 10;
+  if(days === "4") score -= 15;
+
+  if(heavy === "ja") score -= 8;
+
   score = Math.round(clamp(score, 0, 100));
 
   let verdict = "";
@@ -335,9 +373,10 @@ function bereken(){
   let dagtype = "";
   let zone = "";
   let stappen = "";
+  let waarom = "";
   let rodeVlag = "";
 
-  if(score < 55){
+  if(score < 50){
     verdict = "STOP";
     verdictClass = "bad";
     dagtype = "herstel";
@@ -345,48 +384,75 @@ function bereken(){
     nietDoen = "geen training";
     zone = "zone 1";
     stappen = "5000–6500";
+    waarom = "je herstel staat onder druk";
   }
-  else if(score < 65){
+  else if(score < 60){
     verdict = "HERSTEL";
     verdictClass = "mid";
     dagtype = "rustig actief";
-    actie = "20 min wandelen of yoga";
+    actie = "15–20 min wandelen of yoga";
     nietDoen = "geen intensiteit";
     zone = "zone 1";
-    stappen = "6500–8000";
+    stappen = "6000–7500";
+    waarom = "voldoende om te bewegen, niet genoeg om te trainen";
   }
-  else if(score < 75){
+  else if(score < 70){
     verdict = "TRAIN LICHT";
     verdictClass = "mid";
     dagtype = "licht actief";
-    actie = "30 min zone 2 (ochtend)";
+    actie = "20–25 min zone 2 (ochtend)";
     nietDoen = "niet tot uitputting";
     zone = "lage zone 2";
-    stappen = "7500–9000";
+    stappen = "7000–8500";
+    waarom = "je zit in de opbouwzone";
   }
-  else if(score < 85){
+  else if(score < 80){
     verdict = "TRAIN";
     verdictClass = "good";
     dagtype = "trainbaar";
-    actie = "45 min zone 2 (ochtend)";
-    nietDoen = "niet overdrijven";
+    actie = "30–35 min zone 2 (ochtend)";
+    nietDoen = "geen tweede zware prikkel";
     zone = "zone 2";
-    stappen = "8500–10000";
+    stappen = "7500–9000";
+    waarom = "cijfers laten training toe, maar nog gecontroleerd";
   }
   else{
-    verdict = "TOPDAG";
+    verdict = "STERKE DAG";
     verdictClass = "good";
     dagtype = "sterke dag";
-    actie = "45–60 min training (ochtend)";
+    actie = "40–45 min training (ochtend)";
     nietDoen = "niet dom forceren";
     zone = "zone 2 / stevig";
-    stappen = "9000–11000";
+    stappen = "8500–10000";
+    waarom = "goede combinatie van energie en herstel";
   }
 
+  // harde beveiligingen
   if(stress > 40){
-    rodeVlag = "Stress is hoog. Korter houden.";
-    actie = "korter trainen";
+    verdict = "AFREMMEN";
     verdictClass = "bad";
+    actie = "korter trainen of wandelen";
+    nietDoen = "geen intensiteit";
+    zone = "zone 1";
+    stappen = "6000–7500";
+    waarom = "stress ligt te hoog";
+    rodeVlag = "Stress is hoog. Vandaag niet doorduwen.";
+  }
+
+  if(heavy === "ja" && score >= 70){
+    actie = "20–30 min zone 2 (ochtend)";
+    nietDoen = "geen tweede zware prikkel";
+    waarom = "gisteren was al zwaar";
+    if(!rodeVlag) rodeVlag = "Gisteren was zwaar. Vandaag bewust onder controle blijven.";
+  }
+
+  if(days === "3" || days === "4"){
+    if(score >= 70){
+      actie = "20–30 min zone 2 (ochtend)";
+      nietDoen = "geen vierde zware dag";
+      waarom = "je zit te dicht tegen overbelasting";
+    }
+    if(!rodeVlag) rodeVlag = "Meerdere dagen op rij getraind. Vandaag belasting bewaken.";
   }
 
   if(hrv < 40){
@@ -394,14 +460,17 @@ function bereken(){
   }
 
   if(sleep < 55){
-    rodeVlag = rodeVlag ? rodeVlag + " Slaap remt je af." : "Slaap remt je af.";
+    rodeVlag = rodeVlag ? rodeVlag + " Slaap remt af." : "Slaap remt af.";
   }
 
   if(darmen === "slecht"){
     rodeVlag = rodeVlag ? rodeVlag + " Hou het simpel voor je buik." : "Hou het simpel voor je buik.";
+    actie = "korte rustige wandeling";
+    nietDoen = "geen training";
+    zone = "zone 1";
   }
 
-  if(lichaam === "stijf" && score >= 55){
+  if(lichaam === "stijf" && verdict !== "STOP" && verdict !== "AFREMMEN"){
     actie += " + mobiliteit";
   }
 
@@ -412,8 +481,11 @@ function bereken(){
       <div class="kicker">Doen</div>
       <div class="do">${actie}</div>
 
+      <div class="kicker">Waarom</div>
+      <div class="text">${waarom}</div>
+
       <div class="kicker">Niet doen</div>
-      <div class="dont">${nietDoen}</div>
+      <div class="text">${nietDoen}</div>
     </div>
 
     ${rodeVlag ? `<div class="flag bad">${rodeVlag}</div>` : ""}
