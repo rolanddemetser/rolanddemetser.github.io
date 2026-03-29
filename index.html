@@ -1,623 +1,178 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Weekcoach V5</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekcoach V6</title>
 
-  <link rel="apple-touch-icon" href="icon-1024.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#f3f4f6">
+<style>
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    padding: 15px;
+}
 
-  <style>
-    :root {
-      --bg: #f3f4f6;
-      --text: #111111;
-      --muted: #666666;
-      --border: #d7d7d7;
-      --white: #ffffff;
-      --green: #dff5e3;
-      --yellow: #f9efc8;
-      --orange: #fde6d3;
-      --red: #f9dede;
-      --secondary: #7d8391;
-    }
+h1 {
+    text-align: center;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
 
-    body {
-      margin: 0;
-      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
 
-    .app {
-      max-width: 760px;
-      margin: 0 auto;
-      padding-top: 18px;
-    }
+button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
 
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 38px;
-      line-height: 1.02;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      margin: 0 0 18px 0;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.35;
-    }
-
-    .panel {
-      background: rgba(255, 255, 255, 0.35);
-      border-radius: 22px;
-      padding: 2px;
-    }
-
-    input,
-    select,
-    button {
-      width: 100%;
-      padding: 16px;
-      margin-top: 12px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--white);
-      color: var(--text);
-      font-size: 21px;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-
-    button {
-      border: none;
-      font-weight: 800;
-    }
-
-    .primary {
-      background: #000000;
-      color: #ffffff;
-    }
-
-    .secondary {
-      background: var(--secondary);
-      color: #ffffff;
-      font-size: 18px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .row button {
-      margin-top: 0;
-      padding: 14px;
-    }
-
-    .card,
-    .weekcard {
-      display: none;
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 22px;
-      line-height: 1.45;
-    }
-
-    .green { background: var(--green); }
-    .yellow { background: var(--yellow); }
-    .orange { background: var(--orange); }
-    .red { background: var(--red); }
-
-    .title {
-      font-size: 30px;
-      font-weight: 800;
-      line-height: 1.08;
-      margin-bottom: 10px;
-    }
-
-    .box {
-      margin-top: 12px;
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, 0.62);
-      border-radius: 14px;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .line {
-      margin-top: 8px;
-      font-size: 19px;
-    }
-
-    .warn {
-      margin-top: 12px;
-      font-size: 18px;
-      font-weight: 800;
-      color: #992a2a;
-      line-height: 1.35;
-    }
-
-    .section {
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-    }
-
-    .section-title {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .footer {
-      margin-top: 18px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-  </style>
+.result {
+    font-size: 18px;
+    line-height: 1.6;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <h1>Weekcoach V5 🔥</h1>
-    <p class="subtitle">Slimmere coach voor vetverbranding, herstel, weektrend en morgenintentie.</p>
 
-    <div class="panel">
-      <input id="bb" type="number" inputmode="numeric" placeholder="Body Battery (bv 70)">
-      <input id="sleep" type="number" inputmode="numeric" placeholder="Slaapscore (bv 80)">
+<h1>🔥 Weekcoach V6</h1>
 
-      <select id="gevoel">
-        <option value="goed">Gevoel: goed</option>
-        <option value="matig">Gevoel: matig</option>
-        <option value="slecht">Gevoel: slecht</option>
-      </select>
+<div class="card">
+<h3>Input</h3>
 
-      <select id="lichaam">
-        <option value="fris">Lichaam: fris</option>
-        <option value="stram">Lichaam: stram</option>
-        <option value="moe">Lichaam: moe / stijf</option>
-      </select>
+<label>Body Battery</label>
+<input id="bb" type="number" value="60">
 
-      <select id="weer">
-        <option value="droog">Weer: droog</option>
-        <option value="regen">Weer: regen</option>
-      </select>
+<label>Slaapscore</label>
+<input id="sleep" type="number" value="70">
 
-      <select id="moment">
-        <option value="am">Possible: AM</option>
-        <option value="pm">Possible: PM</option>
-        <option value="evening">Possible: Evening</option>
-        <option value="all">Possible: All day</option>
-      </select>
+<label>HRV</label>
+<input id="hrv" type="number" value="50">
 
-      <button class="primary" onclick="berekenCoach()">Wat vandaag?</button>
+<label>Stress</label>
+<input id="stress" type="number" value="20">
 
-      <div class="row">
-        <button class="secondary" onclick="toonWeekstatus()">Toon weekstatus</button>
-        <button class="secondary" onclick="resetWeek()">Reset week</button>
-      </div>
-    </div>
+<label>Gevoel</label>
+<select id="gevoel">
+<option value="30">Slecht</option>
+<option value="60" selected>OK</option>
+<option value="85">Goed</option>
+</select>
 
-    <div id="result" class="card"></div>
-    <div id="weekstatus" class="weekcard yellow"></div>
+<label>Monotony</label>
+<input id="mono" type="number" value="5">
 
-    <div class="footer">Zone 2-focus: ongeveer 95–110 bpm</div>
-  </div>
+<label>Recovery</label>
+<input id="recovery" type="number" value="60">
 
-  <script>
-    const STORAGE_KEY = "weekcoach_v5_data";
+<label>Wanneer trainen?</label>
+<select id="moment">
+<option value="ochtend">Ochtend</option>
+<option value="middag">Middag</option>
+<option value="avond">Avond</option>
+</select>
 
-    function todayKey() {
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}-${m}-${day}`;
+<label>Duur</label>
+<select id="duur">
+<option value="20">20 min</option>
+<option value="30">30 min</option>
+<option value="45">45 min</option>
+<option value="60">60 min</option>
+</select>
+
+<button onclick="bereken()">Wat vandaag?</button>
+</div>
+
+<div class="card result" id="output">
+Resultaat verschijnt hier...
+</div>
+
+<script>
+function bereken() {
+
+let bb = Number(document.getElementById("bb").value);
+let sleep = Number(document.getElementById("sleep").value);
+let hrv = Number(document.getElementById("hrv").value);
+let stress = Number(document.getElementById("stress").value);
+let gevoel = Number(document.getElementById("gevoel").value);
+let mono = Number(document.getElementById("mono").value);
+let recovery = Number(document.getElementById("recovery").value);
+let moment = document.getElementById("moment").value;
+let duur = document.getElementById("duur").value;
+
+let readiness =
+(bb * 0.35) +
+(sleep * 0.20) +
+(hrv * 0.20) +
+((100 - stress) * 0.15) +
+(gevoel * 0.10);
+
+let advies = "";
+let type = "";
+let hartslag = "";
+
+if (readiness < 50 || recovery < 50) {
+    type = "🔴 Rust / herstel";
+    advies = "Korte wandeling of yoga";
+    hartslag = "Zeer laag";
+}
+else if (readiness < 65 || mono > 6) {
+    type = "🟢 Actief herstel";
+    advies = "Rustige wandeling + eventueel yoga";
+    hartslag = "Laag (zone 1-2)";
+}
+else if (readiness < 75) {
+    type = "🟡 Zone 2 training";
+    advies = "Stevige wandeling";
+    hartslag = "Zone 2";
+}
+else {
+    if (mono > 5) {
+        type = "🟡 Beperkte training";
+        advies = "Geen zware prikkel wegens monotony";
+        hartslag = "Zone 2";
+    } else {
+        type = "🔥 Sterke trainingsdag";
+        advies = "Krachttraining of interval";
+        hartslag = "Hoger mogelijk";
     }
+}
 
-    function getData() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    }
+// Aanpassing op moment
+if (moment === "avond") {
+    advies += " (houd het rustiger voor slaap)";
+}
 
-    function saveData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+if (moment === "ochtend") {
+    advies += " (goede start van de dag)";
+}
 
-    function saveToday(entry) {
-      let data = getData();
-      const key = todayKey();
+// Output
+document.getElementById("output").innerHTML = `
+<b>Readiness:</b> ${Math.round(readiness)} / 100<br><br>
+<b>Type dag:</b> ${type}<br>
+<b>Advies:</b> ${advies}<br>
+<b>Duur:</b> ${duur} min<br>
+<b>Hartslag:</b> ${hartslag}
+`;
 
-      data = data.filter(item => item.date !== key);
-      data.push({ ...entry, date: key });
-      data.sort((a, b) => a.date.localeCompare(b.date));
+}
+</script>
 
-      if (data.length > 7) {
-        data = data.slice(-7);
-      }
-
-      saveData(data);
-      return data;
-    }
-
-    function average(arr) {
-      if (!arr.length) return 0;
-      return arr.reduce((sum, value) => sum + value, 0) / arr.length;
-    }
-
-    function stddev(arr) {
-      if (arr.length < 2) return 0;
-      const avg = average(arr);
-      const variance = average(arr.map(x => (x - avg) ** 2));
-      return Math.sqrt(variance);
-    }
-
-    function calcMonotony(arr) {
-      if (arr.length < 3) return null;
-      const avg = average(arr);
-      const sd = stddev(arr);
-      if (sd === 0) return null;
-      return avg / sd;
-    }
-
-    function trendText(arr) {
-      if (arr.length < 2) return "onvoldoende data";
-      const last = arr[arr.length - 1];
-      const prev = arr[arr.length - 2];
-
-      if (last > prev) return "⬆️ stijgend";
-      if (last < prev) return "⬇️ dalend";
-      return "➖ stabiel";
-    }
-
-    function calculateScore(bb, sleep, gevoel, lichaam) {
-      let score = 0;
-
-      if (bb >= 80) score += 3;
-      else if (bb >= 70) score += 2;
-      else if (bb >= 60) score += 1;
-
-      if (sleep >= 80) score += 3;
-      else if (sleep >= 70) score += 2;
-      else if (sleep >= 60) score += 1;
-
-      if (gevoel === "goed") score += 2;
-      else if (gevoel === "matig") score += 1;
-
-      if (lichaam === "fris") score += 2;
-      else if (lichaam === "stram") score += 1;
-
-      return Math.max(1, Math.min(10, score));
-    }
-
-    function recoveryScore(bb, sleep, score, gevoel, lichaam) {
-      let value = (bb * 0.35) + (sleep * 0.35) + (score * 2);
-
-      if (gevoel === "matig") value -= 4;
-      if (gevoel === "slecht") value -= 10;
-      if (lichaam === "stram") value -= 5;
-      if (lichaam === "moe") value -= 10;
-
-      value = Math.round(value);
-      return Math.max(0, Math.min(100, value));
-    }
-
-    function timingText(moment) {
-      if (moment === "am") return "Voormiddag: hou het compact en gecontroleerd.";
-      if (moment === "pm") return "Namiddag: goed moment voor een gerichte sessie.";
-      if (moment === "evening") return "Avond: liever geen zware of te lange prikkel.";
-      return "All day: kies het moment waarop je je het best voelt.";
-    }
-
-    function buildWeekAssessment(data) {
-      const loads = data.map(x => x.score);
-      const recoveries = data.map(x => x.recovery);
-      const days = loads.length;
-      const avg = average(loads);
-      const avgRecovery = average(recoveries);
-      const mono = calcMonotony(loads);
-      const trend = trendText(loads);
-      const heavyDays = data.filter(x => x.score >= 8).length;
-      const recoveryDays = data.filter(x => x.score <= 4).length;
-      const consecutiveHeavy =
-        data.length >= 2 &&
-        data[data.length - 1].score >= 8 &&
-        data[data.length - 2].score >= 8;
-
-      let status = "";
-      let coachText = "";
-
-      if (days <= 2) {
-        status = "Opbouwfase";
-        coachText = "Nog te weinig weekdata om een echte trend te beoordelen. Blijf gecontroleerd.";
-      } else if (mono !== null && mono > 2.0) {
-        status = "Te eenvormig patroon";
-        coachText = "Je belasting is te weinig gevarieerd. Dat verhoogt het risico op overbelasting.";
-      } else if (consecutiveHeavy) {
-        status = "Stapelen";
-        coachText = "Je hebt zware dagen op rij. Nog eens doorduwen is meestal geen slimme keuze.";
-      } else if (heavyDays >= 3) {
-        status = "Sterke week, opletten";
-        coachText = "Je hebt al meerdere stevige dagen. Nog zwaarder gaan is niet vanzelf slim.";
-      } else if (avg >= 6.5) {
-        status = "Sterk maar controle houden";
-        coachText = "Je week ligt hoog. Trainen kan, maar stapelen van zware dagen is riskant.";
-      } else if (avg >= 4.5) {
-        status = "Gebalanceerd";
-        coachText = "Je weekbelasting oogt bruikbaar en redelijk gespreid.";
-      } else {
-        status = "Lichte week";
-        coachText = "Je weekbelasting is voorlopig eerder licht.";
-      }
-
-      return {
-        days,
-        avg,
-        avgRecovery,
-        mono,
-        trend,
-        heavyDays,
-        recoveryDays,
-        consecutiveHeavy,
-        status,
-        coachText
-      };
-    }
-
-    function tomorrowForecast(todayScore, todayType, weekInfo, recovery) {
-      if (todayType === "red") {
-        return {
-          title: "🔮 Morgenintentie: mogelijk beter",
-          text: "Als je vandaag echt rustig houdt, kan morgen beter trainbaar zijn."
-        };
-      }
-
-      if (weekInfo.status === "Te eenvormig patroon" || weekInfo.status === "Stapelen") {
-        return {
-          title: "🔮 Morgenintentie: licht of herstel",
-          text: "Je week vraagt rem. Morgen best geen nieuwe stevige prikkel."
-        };
-      }
-
-      if (todayScore >= 8 && recovery < 80) {
-        return {
-          title: "🔮 Morgenintentie: waarschijnlijk lichter",
-          text: "Vandaag was bruikbaar, maar niet topfris. Morgen beter light houden."
-        };
-      }
-
-      if (todayScore >= 9 && recovery >= 85) {
-        return {
-          title: "🔮 Morgenintentie: opnieuw trainbaar",
-          text: "Alleen als je vandaag beheerst blijft, kan morgen opnieuw een bruikbare dag zijn."
-        };
-      }
-
-      if (todayScore >= 7) {
-        return {
-          title: "🔮 Morgenintentie: check herstel",
-          text: "Morgen hangt sterk af van slaap en hoe fris je opstaat."
-        };
-      }
-
-      return {
-        title: "🔮 Morgenintentie: rustig starten",
-        text: "Morgen opnieuw beoordelen op basis van herstel en gevoel."
-      };
-    }
-
-    function buildAdvice(score, recovery, weer, moment, weekInfo) {
-      let type = "";
-      let title = "";
-      let dagBesluit = "";
-      let advies = "";
-      let duur = "";
-      let stappen = "";
-      let hartslag = "";
-      let waarschuwing = "";
-
-      if (score <= 4 || recovery < 55) {
-        type = "red";
-        title = "🔴 HERSTEL VERPLICHT";
-        dagBesluit = "Vandaag geen training.";
-        advies = weer === "regen"
-          ? "Zachte yoga of heel rustige korte gewone wandeling. Geen strand."
-          : "Rustige wandeling of zachte yoga.";
-        duur = "20–30 min max.";
-        stappen = "6000–7000";
-        hartslag = "Liefst onder zone 2.";
-        waarschuwing = "Niet uitbreiden. Geen HASfit.";
-      } else if (weekInfo.days >= 4 && weekInfo.avg >= 6.8) {
-        type = "red";
-        title = "🔴 WEEKREM";
-        dagBesluit = "Vandaag bewust afremmen.";
-        advies = weer === "regen"
-          ? "Korte rustige gewone wandeling of yoga. Geen strand."
-          : "Korte rustige wandeling of yoga.";
-        duur = "20–30 min.";
-        stappen = "6500–7500";
-        hartslag = "Laag en rustig.";
-        waarschuwing = "Je weekbelasting is te hoog om nog door te duwen.";
-      } else if (weekInfo.days >= 5 && weekInfo.mono !== null && weekInfo.mono > 2.0) {
-        type = "orange";
-        title = "🟠 AFREMDAG";
-        dagBesluit = "Vandaag lichter houden.";
-        advies = weer === "regen"
-          ? "Gewone rustige wandeling. Geen strandwandeling."
-          : "Rustige zone 2-wandeling zonder extra tempo.";
-        duur = moment === "evening" ? "25–30 min." : "30–40 min.";
-        stappen = "7500–8500";
-        hartslag = "95–102 bpm.";
-        waarschuwing = "Te weinig variatie deze week. Geen krachttraining vandaag.";
-      } else if (weekInfo.consecutiveHeavy) {
-        type = "orange";
-        title = "🟠 REM NA STAPELING";
-        dagBesluit = "Vandaag geen derde zware prikkel.";
-        advies = weer === "regen"
-          ? "Gewone rustige wandeling of binnenwandeling."
-          : "Rustige tot matige wandeling, zonder extra tempo.";
-        duur = "30–40 min.";
-        stappen = "7500–9000";
-        hartslag = "95–105 bpm.";
-        waarschuwing = "Je hebt al zware dagen op rij. Vandaag niet nog eens doorduwen.";
-      } else if (score <= 6 || recovery < 70) {
-        type = "orange";
-        title = "🟠 LICHTE DAG";
-        dagBesluit = "Vandaag bewegen, niet pushen.";
-        advies = weer === "regen"
-          ? "Gewone rustige wandeling of binnenwandeling."
-          : "Rustige wandeling in lage zone 2.";
-        duur = moment === "evening" ? "25–30 min." : "30–40 min.";
-        stappen = "7500–8500";
-        hartslag = "95–105 bpm.";
-        waarschuwing = "Geen krachttraining. Niet uitbreiden.";
-      } else if ((score >= 7 && recovery < 85) || (score === 9 && recovery < 85)) {
-        type = "yellow";
-        title = "🟡 GECONTROLEERDE DAG";
-        dagBesluit = "Vandaag is goed, maar geen dubbele prikkel.";
-        advies = weer === "regen"
-          ? "Stevige gewone wandeling. Geen strand."
-          : "Stevige strandwandeling in zone 2.";
-        duur = moment === "all" ? "45–60 min." : "35–45 min.";
-        stappen = "9000–10000";
-        hartslag = "95–105 bpm, liever niet boven 110.";
-        waarschuwing = "GEEN zware HASfit vandaag. Je recovery is niet hoog genoeg om te stapelen.";
-      } else {
-        type = "green";
-        title = "🟢 STERKE DAG";
-        dagBesluit = "Vandaag kan je combineren, maar beheerst.";
-        advies = weer === "regen"
-          ? "Gewone stevige wandeling + eventueel korte HASfit."
-          : "Strandwandeling met tempo + eventueel korte HASfit.";
-        duur = moment === "evening"
-          ? "35–45 min wandelen + eventueel heel korte kracht."
-          : "45–60 min wandelen + korte kracht.";
-        stappen = "10000+";
-        hartslag = "Wandelen in zone 2, kracht kort en beheerst.";
-        waarschuwing = weekInfo.avg > 7 && score > 8
-          ? "Vandaag voelt sterk, maar je zit al hoog deze week. Dit is waar mensen overdrijven."
-          : "Goede dag, maar nog altijd: niet onnodig uitbreiden.";
-      }
-
-      return { type, title, dagBesluit, advies, duur, stappen, hartslag, waarschuwing };
-    }
-
-    function berekenCoach() {
-      const bb = parseInt(document.getElementById("bb").value);
-      const sleep = parseInt(document.getElementById("sleep").value);
-      const gevoel = document.getElementById("gevoel").value;
-      const lichaam = document.getElementById("lichaam").value;
-      const weer = document.getElementById("weer").value;
-      const moment = document.getElementById("moment").value;
-
-      const result = document.getElementById("result");
-      result.style.display = "block";
-      result.className = "card";
-
-      if (!bb || !sleep) {
-        result.innerHTML = `
-          <div class="title">Nog niet volledig</div>
-          <div class="line">Vul eerst Body Battery en slaapscore in.</div>
-        `;
-        return;
-      }
-
-      const score = calculateScore(bb, sleep, gevoel, lichaam);
-      const recovery = recoveryScore(bb, sleep, score, gevoel, lichaam);
-
-      const beforeData = getData();
-      const beforeWeek = buildWeekAssessment(beforeData);
-
-      const advice = buildAdvice(score, recovery, weer, moment, beforeWeek);
-
-      const updatedData = saveToday({
-        score: score,
-        recovery: recovery,
-        color: advice.type
-      });
-
-      const weekInfo = buildWeekAssessment(updatedData);
-      const forecast = tomorrowForecast(score, advice.type, weekInfo, recovery);
-      const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
-
-      result.classList.add(advice.type);
-      result.innerHTML = `
-        <div class="title">${advice.title}</div>
-        <div class="box">Trainingsscore vandaag: ${score}/10</div>
-        <div class="box">Recovery vandaag: ${recovery}/100</div>
-        <div class="box">Stappendoel: ${advice.stappen} stappen</div>
-
-        <div class="line"><strong>Dagbesluit:</strong> ${advice.dagBesluit}</div>
-        <div class="line"><strong>Vandaag:</strong> ${advice.advies}</div>
-        <div class="line"><strong>Duur:</strong> ${advice.duur}</div>
-        <div class="line"><strong>Hartslag:</strong> ${advice.hartslag}</div>
-        <div class="line"><strong>Possible:</strong> ${timingText(moment)}</div>
-        <div class="line"><strong>Weekstatus:</strong> ${weekInfo.status}</div>
-        <div class="line"><strong>Weekcoach:</strong> ${weekInfo.coachText}</div>
-        <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
-        <div class="line"><strong>Gemiddelde recovery:</strong> ${weekInfo.avgRecovery.toFixed(0)}/100</div>
-        <div class="line"><strong>Monotony:</strong> ${monoText}</div>
-        <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
-
-        <div class="warn">${advice.waarschuwing}</div>
-
-        <div class="section">
-          <div class="section-title">${forecast.title}</div>
-          <div>${forecast.text}</div>
-        </div>
-      `;
-    }
-
-    function toonWeekstatus() {
-      const box = document.getElementById("weekstatus");
-      const data = getData();
-
-      box.style.display = "block";
-      box.className = "weekcard yellow";
-
-      if (!data.length) {
-        box.innerHTML = `
-          <div class="title">Nog geen weekdata</div>
-          <div class="line">Gebruik de coach een paar dagen en de weekstatus wordt zinvol.</div>
-        `;
-        return;
-      }
-
-      const weekInfo = buildWeekAssessment(data);
-      const totalLoad = data.reduce((sum, item) => sum + item.score, 0);
-      const monoText = weekInfo.mono === null ? "onvoldoende data" : weekInfo.mono.toFixed(1);
-
-      box.innerHTML = `
-        <div class="title">Weekstatus</div>
-        <div class="box">Totale weekload: ${totalLoad}</div>
-        <div class="line"><strong>Dagen bewaard:</strong> ${weekInfo.days}</div>
-        <div class="line"><strong>Gemiddelde load:</strong> ${weekInfo.avg.toFixed(1)}</div>
-        <div class="line"><strong>Gemiddelde recovery:</strong> ${weekInfo.avgRecovery.toFixed(0)}/100</div>
-        <div class="line"><strong>Monotony:</strong> ${monoText}</div>
-        <div class="line"><strong>Trend:</strong> ${weekInfo.trend}</div>
-        <div class="line"><strong>Zware dagen:</strong> ${weekInfo.heavyDays}</div>
-        <div class="line"><strong>Hersteldagen:</strong> ${weekInfo.recoveryDays}</div>
-        <div class="line"><strong>Status:</strong> ${weekInfo.status}</div>
-        <div class="warn">${weekInfo.coachText}</div>
-      `;
-    }
-
-    function resetWeek() {
-      localStorage.removeItem(STORAGE_KEY);
-      document.getElementById("result").style.display = "none";
-      document.getElementById("weekstatus").style.display = "none";
-      alert("Week gereset.");
-    }
-  </script>
 </body>
 </html>
