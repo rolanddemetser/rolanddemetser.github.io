@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f3f4f6" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Pro coach RDM — Level 6</title>
+  <title>Pro coach RDM</title>
 
   <style>
     :root{
@@ -15,14 +15,13 @@
       --text:#111111;
       --muted:#6b7280;
       --line:#e5e7eb;
-
-      --green:#dff7e6;
-      --yellow:#fff1cc;
-      --red:#ffd9d9;
-      --blue:#e8f1ff;
       --soft:#f9fafb;
 
-      --shadow:0 10px 24px rgba(0,0,0,0.05);
+      --good:#dff7e6;
+      --mid:#fff1cc;
+      --bad:#ffd9d9;
+
+      --shadow:0 8px 22px rgba(0,0,0,0.05);
       --radius:20px;
     }
 
@@ -38,13 +37,13 @@
     }
 
     .wrap{
-      max-width:780px;
+      max-width:760px;
       margin:0 auto;
-      padding:16px 16px 40px;
+      padding:16px 16px 36px;
     }
 
     h1{
-      margin:0 0 8px;
+      margin:0 0 6px;
       font-size:34px;
       line-height:1.02;
       font-weight:900;
@@ -52,11 +51,11 @@
     }
 
     .sub{
-      color:var(--muted);
       margin:0 0 18px;
-      font-weight:700;
+      color:var(--muted);
       font-size:17px;
-      line-height:1.32;
+      line-height:1.3;
+      font-weight:700;
     }
 
     .card{
@@ -69,7 +68,7 @@
 
     .section-title{
       margin:0 0 12px;
-      font-size:21px;
+      font-size:22px;
       font-weight:900;
       letter-spacing:-0.2px;
     }
@@ -96,7 +95,7 @@
       display:block;
       margin:0 0 6px;
       font-size:14px;
-      font-weight:850;
+      font-weight:900;
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:0.5px;
@@ -144,24 +143,24 @@
       padding:18px;
       border-radius:16px;
       font-size:28px;
-      line-height:1.08;
+      line-height:1.06;
       font-weight:900;
       text-align:center;
       margin-bottom:12px;
       letter-spacing:-0.5px;
     }
 
-    .good{ background:var(--green); }
-    .mid{ background:var(--yellow); }
-    .bad{ background:var(--red); }
+    .good{ background:var(--good); }
+    .mid{ background:var(--mid); }
+    .bad{ background:var(--bad); }
 
     .alert{
-      background:var(--red);
+      background:var(--bad);
       border-radius:16px;
       padding:16px;
       margin-bottom:12px;
       font-size:19px;
-      line-height:1.3;
+      line-height:1.28;
       font-weight:900;
     }
 
@@ -233,25 +232,6 @@
       letter-spacing:-0.4px;
     }
 
-    .weekbox{
-      background:var(--soft);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:16px;
-    }
-
-    .weekrow{
-      margin:0 0 10px;
-      font-size:18px;
-      line-height:1.35;
-      color:#4b5563;
-      font-weight:800;
-    }
-
-    .weekrow:last-child{
-      margin-bottom:0;
-    }
-
     .empty{
       color:var(--muted);
       font-size:18px;
@@ -259,11 +239,10 @@
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <h1>🔥 Pro coach RDM</h1>
-    <div class="sub">Level 6. Coach stuurt je dag, bewaakt opstapeling en dwingt timing af.</div>
+    <div class="sub">Nieuwe basis. Eén duidelijke beslissing per dag.</div>
 
     <div class="card">
       <div class="section-title">Herstel</div>
@@ -315,8 +294,8 @@
           </select>
         </div>
         <div>
-          <label for="fatigueRise">Vermoeidheid stijgt?</label>
-          <select id="fatigueRise">
+          <label for="fatigue">Vermoeidheid stijgt?</label>
+          <select id="fatigue">
             <option value="nee" selected>nee</option>
             <option value="ja">ja</option>
           </select>
@@ -328,7 +307,7 @@
       <div class="section-title">Belasting</div>
       <div class="grid two">
         <div>
-          <label for="days">Dagen op rij</label>
+          <label for="days">Dagen op rij getraind</label>
           <select id="days">
             <option value="0">0</option>
             <option value="1">1</option>
@@ -383,51 +362,6 @@
       return 38;
     }
 
-    function coachTekst(verdict){
-      if(verdict === "OPBOUWEN") return "Vandaag mag je prikkelen, maar alleen gecontroleerd.";
-      if(verdict === "LICHT TRAINEN") return "Je beweegt, maar verhoogt niets.";
-      if(verdict === "BEWUST LICHT") return "Je zit in opstapeling. Minder doen is vandaag juist.";
-      if(verdict === "HERSTELDAG") return "Vandaag moet herstel primeren op training.";
-      if(verdict === "AFREMMEN") return "Vandaag rem je. Zo voorkom je een dip.";
-      if(verdict === "STOP") return "Vandaag niet trainen.";
-      return "Blijf gecontroleerd.";
-    }
-
-    function morgenTekst(verdict){
-      if(verdict === "OPBOUWEN") return "Controle vandaag houdt morgen bruikbaar.";
-      if(verdict === "LICHT TRAINEN") return "Licht trainen vandaag bewaart opties voor morgen.";
-      if(verdict === "BEWUST LICHT") return "Vandaag terugnemen geeft morgen opnieuw ruimte.";
-      if(verdict === "HERSTELDAG") return "Herstel vandaag vergroot de kans op een betere morgen.";
-      if(verdict === "AFREMMEN") return "Vandaag remmen voorkomt verder verval morgen.";
-      if(verdict === "STOP") return "Rust vandaag voorkomt verdere achteruitgang.";
-      return "Vandaag bepaalt morgen.";
-    }
-
-    function weekStatus(days, heavy, trend, verdict, followed){
-      let belasting = "laag";
-      if(days === 2) belasting = "matig";
-      if(days === 3) belasting = "hoog";
-      if(days >= 4) belasting = "zeer hoog";
-      if(heavy === "ja" && days >= 2) belasting = "hoog";
-
-      let hersteltrend = "stabiel";
-      if(trend === "beter") hersteltrend = "stijgend";
-      if(trend === "slechter") hersteltrend = "dalend";
-      if(trend === "stabiel" && days >= 3) hersteltrend = "stabiel maar kwetsbaar";
-
-      let gedrag = followed === "ja" ? "coach gevolgd" : "coach genegeerd";
-
-      let actie = "stabiel houden";
-      if(verdict === "OPBOUWEN") actie = "gecontroleerd verderbouwen";
-      if(verdict === "LICHT TRAINEN") actie = "niet verhogen";
-      if(verdict === "BEWUST LICHT") actie = "24u belasting verlagen";
-      if(verdict === "HERSTELDAG") actie = "herstel prioriteit geven";
-      if(verdict === "AFREMMEN") actie = "hard afremmen";
-      if(verdict === "STOP") actie = "stop";
-
-      return { belasting, hersteltrend, gedrag, actie };
-    }
-
     function bereken(){
       const bb = clamp(parseInt(document.getElementById("bb").value) || 0, 0, 100);
       const sleep = clamp(parseInt(document.getElementById("sleep").value) || 0, 0, 100);
@@ -437,10 +371,10 @@
       const gevoel = document.getElementById("gevoel").value;
       const lichaam = document.getElementById("lichaam").value;
       const darmen = document.getElementById("darmen").value;
-      const fatigueRise = document.getElementById("fatigueRise").value;
+      const fatigue = document.getElementById("fatigue").value;
 
-      const daysValue = document.getElementById("days").value;
-      const days = daysValue === "4" ? 4 : parseInt(daysValue) || 0;
+      const daysRaw = document.getElementById("days").value;
+      const days = daysRaw === "4" ? 4 : parseInt(daysRaw) || 0;
       const heavy = document.getElementById("heavy").value;
       const trend = document.getElementById("trend").value;
       const followed = document.getElementById("followed").value;
@@ -451,174 +385,208 @@
         (hrvToScore(hrv) * 0.25) +
         ((100 - stress) * 0.20);
 
-      if(gevoel === "goed") score += 5;
-      if(gevoel === "slecht") score -= 10;
+      if (gevoel === "goed") score += 5;
+      if (gevoel === "slecht") score -= 10;
 
-      if(lichaam === "fris") score += 3;
-      if(lichaam === "stijf") score -= 6;
-      if(lichaam === "moe") score -= 15;
+      if (lichaam === "fris") score += 3;
+      if (lichaam === "stijf") score -= 6;
+      if (lichaam === "moe") score -= 15;
 
-      if(darmen === "traag") score -= 4;
-      if(darmen === "slecht") score -= 10;
+      if (darmen === "traag") score -= 4;
+      if (darmen === "slecht") score -= 10;
 
-      if(days === 2) score -= 5;
-      if(days === 3) score -= 12;
-      if(days >= 4) score -= 18;
+      if (days === 2) score -= 5;
+      if (days === 3) score -= 12;
+      if (days >= 4) score -= 18;
 
-      if(heavy === "ja") score -= 8;
-      if(trend === "beter") score += 3;
-      if(trend === "slechter") score -= 8;
-      if(fatigueRise === "ja") score -= 8;
-      if(followed === "nee") score -= 6;
+      if (heavy === "ja") score -= 8;
+      if (trend === "beter") score += 3;
+      if (trend === "slechter") score -= 8;
+      if (fatigue === "ja") score -= 8;
+      if (followed === "nee") score -= 6;
 
       score = Math.round(clamp(score, 0, 100));
 
       let verdict = "";
       let verdictClass = "mid";
-      let reden = "";
-      let actie = "";
-      let grens = "";
+      let reason = "";
+      let action = "";
+      let limit = "";
       let coach = "";
-      let morgen = "";
+      let tomorrow = "";
       let zone = "";
-      let stappen = "";
-      let dagtype = "";
-      let hardAlert = "";
+      let steps = "";
+      let daytype = "";
+      let alert = "";
+      let weekLoad = "";
+      let weekTrend = "";
+      let weekAction = "";
 
-      if(stress > 45){
+      if (stress > 45) {
         verdict = "AFREMMEN";
         verdictClass = "bad";
-        reden = "Stress ligt te hoog.";
-        actie = "20–30 min rustig wandelen. Meer niet.";
-        grens = "geen training, geen intensiteit";
+        reason = "Stress ligt te hoog.";
+        action = "20–30 min rustig wandelen. Meer niet.";
+        limit = "geen training, geen intensiteit";
+        coach = "Vandaag rem je. Niet onderhandelen.";
+        tomorrow = "Alleen remmen houdt morgen bruikbaar.";
         zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "afremmen";
-        hardAlert = "Vandaag geen extra trainingsdruk.";
-      }
-      else if(darmen === "slecht"){
+        steps = "6000–7500";
+        daytype = "afremmen";
+        alert = "Vandaag geen extra trainingsdruk.";
+      } else if (darmen === "slecht") {
         verdict = "HERSTELDAG";
         verdictClass = "bad";
-        reden = "Buik is vandaag de beperkende factor.";
-        actie = "Korte rustige wandeling of niets.";
-        grens = "geen training";
+        reason = "Buik is vandaag de beperkende factor.";
+        action = "Korte rustige wandeling of niets.";
+        limit = "geen training";
+        coach = "Vandaag simpel houden.";
+        tomorrow = "Rust vandaag voorkomt extra last morgen.";
         zone = "zone 1";
-        stappen = "5000–7000";
-        dagtype = "herstel";
-        hardAlert = "Vandaag simpel houden.";
-      }
-      else if(days >= 3 && trend === "slechter"){
+        steps = "5000–7000";
+        daytype = "herstel";
+        alert = "Vandaag buik eerst, training niet.";
+      } else if (days >= 3 && trend === "slechter") {
         verdict = "AFREMMEN";
         verdictClass = "bad";
-        reden = "Belasting stapelt op en je trend daalt.";
-        actie = "20 min wandelen of rustige yoga. Geen zone 2.";
-        grens = "geen trainingsprikkel";
+        reason = "Belasting stapelt op en je trend daalt.";
+        action = "20 min wandelen of rustige yoga. Geen zone 2.";
+        limit = "geen trainingsprikkel";
+        coach = "Vandaag trek je de rem op.";
+        tomorrow = "Niet afremmen = morgen slechter.";
         zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "afremmen";
-        hardAlert = "Vandaag trek je de rem op.";
-      }
-      else if(days >= 3 && followed === "nee"){
+        steps = "6000–7500";
+        daytype = "afremmen";
+        alert = "Negatieve opstapeling. Vandaag remmen.";
+      } else if (days >= 3 && followed === "nee") {
         verdict = "HERSTELDAG";
         verdictClass = "bad";
-        reden = "Je negeerde gisteren de grens terwijl de belasting al opliep.";
-        actie = "20 min rustig wandelen. Niet meer.";
-        grens = "geen zone 2 vandaag";
+        reason = "Je negeerde gisteren de grens terwijl de belasting al opliep.";
+        action = "20 min rustig wandelen. Niet meer.";
+        limit = "geen zone 2 vandaag";
+        coach = "Coach corrigeert. Vandaag lager.";
+        tomorrow = "Vandaag corrigeren maakt morgen opnieuw mogelijk.";
         zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "herstel";
-        hardAlert = "Coach corrigeert: vandaag verplicht lager.";
-      }
-      else if(days >= 3 || fatigueRise === "ja"){
+        steps = "6000–7500";
+        daytype = "herstel";
+        alert = "Vandaag verplicht lager.";
+      } else if (days >= 3 || fatigue === "ja") {
         verdict = "BEWUST LICHT";
         verdictClass = "mid";
-        reden = "Opstapeling begint te tellen.";
-        actie = "20–25 min rustige zone 2 (ochtend). Niet meer.";
-        grens = "geen versnelling, geen verlenging, geen tweede training";
+        reason = "Opstapeling begint te tellen.";
+        action = "20–25 min rustige zone 2 (ochtend). Niet meer.";
+        limit = "geen versnelling, geen verlenging, geen tweede training";
+        coach = "Je zit in opstapeling. Minder doen is vandaag juist.";
+        tomorrow = "Vandaag terugnemen geeft morgen opnieuw ruimte.";
         zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-        hardAlert = "Vandaag verlaag je belasting.";
-      }
-      else if(heavy === "ja" && score >= 60){
+        steps = "7000–8500";
+        daytype = "licht actief";
+        alert = "Vandaag verlaag je belasting.";
+      } else if (heavy === "ja" && score >= 60) {
         verdict = "LICHT TRAINEN";
         verdictClass = "mid";
-        reden = "Gisteren zat de zware prikkel al.";
-        actie = "20–25 min zone 2.";
-        grens = "geen tweede zware prikkel";
+        reason = "Gisteren zat de zware prikkel al.";
+        action = "20–25 min zone 2.";
+        limit = "geen tweede zware prikkel";
+        coach = "Vandaag onderhoud, niet verhogen.";
+        tomorrow = "Beheersing vandaag bewaart opties voor morgen.";
         zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-      }
-      else if(score < 48){
+        steps = "7000–8500";
+        daytype = "licht actief";
+        alert = "Vandaag gecontroleerd houden.";
+      } else if (score < 48) {
         verdict = "STOP";
         verdictClass = "bad";
-        reden = "Herstel is onvoldoende.";
-        actie = "Geen training.";
-        grens = "volledige rust of enkel los wandelen";
+        reason = "Herstel is onvoldoende.";
+        action = "Geen training.";
+        limit = "volledige rust of enkel los wandelen";
+        coach = "Vandaag stoppen.";
+        tomorrow = "Rust vandaag voorkomt verder wegzakken.";
         zone = "zone 1";
-        stappen = "5000–6500";
-        dagtype = "herstel";
-        hardAlert = "Vandaag stoppen.";
-      }
-      else if(score < 58){
+        steps = "5000–6500";
+        daytype = "herstel";
+        alert = "Vandaag niet trainen.";
+      } else if (score < 58) {
         verdict = "HERSTELDAG";
         verdictClass = "mid";
-        reden = "Paraatheid is te laag voor echte trainingswinst.";
-        actie = "20 min wandelen. Rustig.";
-        grens = "geen intensiteit";
+        reason = "Paraatheid is te laag voor echte trainingswinst.";
+        action = "20 min wandelen. Rustig.";
+        limit = "geen intensiteit";
+        coach = "Vandaag herstel voorrang geven.";
+        tomorrow = "Herstel vandaag vergroot je kans op een betere morgen.";
         zone = "zone 1";
-        stappen = "6000–7500";
-        dagtype = "herstel";
-      }
-      else if(score < 70){
+        steps = "6000–7500";
+        daytype = "herstel";
+        alert = "Vandaag bewust rustiger.";
+      } else if (score < 70) {
         verdict = "LICHT TRAINEN";
         verdictClass = "mid";
-        reden = "Goed genoeg om te bewegen, niet om te pushen.";
-        actie = "25 min zone 2.";
-        grens = "niet pushen";
+        reason = "Goed genoeg om te bewegen, niet om te pushen.";
+        action = "25 min zone 2.";
+        limit = "niet pushen";
+        coach = "Vandaag onderhouden, geen ambitie.";
+        tomorrow = "Controle vandaag houdt je stabiel.";
         zone = "lage zone 2";
-        stappen = "7000–8500";
-        dagtype = "licht actief";
-      }
-      else{
+        steps = "7000–8500";
+        daytype = "licht actief";
+        alert = "Vandaag gecontroleerd trainen.";
+      } else {
         verdict = "OPBOUWEN";
         verdictClass = "good";
-        reden = "Je cijfers laten een gecontroleerde trainingsprikkel toe.";
-        actie = "30–40 min zone 2.";
-        grens = "geen tweede zware prikkel";
+        reason = "Je cijfers laten een gecontroleerde prikkel toe.";
+        action = "30–40 min zone 2.";
+        limit = "geen tweede zware prikkel";
+        coach = "Vandaag mag je bouwen, maar strak gedoseerd.";
+        tomorrow = "Goed doseren vandaag houdt morgen bruikbaar.";
         zone = "zone 2";
-        stappen = "7500–9500";
-        dagtype = "trainbaar";
+        steps = "7500–9500";
+        daytype = "trainbaar";
+        alert = "Vandaag mag je opbouwen.";
       }
 
-      if(lichaam === "stijf" && !["STOP","AFREMMEN","HERSTELDAG"].includes(verdict)){
-        actie += " + 5–10 min mobiliteit";
+      if (lichaam === "stijf" && !["STOP","AFREMMEN","HERSTELDAG"].includes(verdict)) {
+        action += " + 5–10 min mobiliteit";
       }
 
-      coach = coachTekst(verdict);
-      morgen = morgenTekst(verdict);
-      const week = weekStatus(days, heavy, trend, verdict, followed);
+      weekLoad = "laag";
+      if (days === 2) weekLoad = "matig";
+      if (days === 3) weekLoad = "hoog";
+      if (days >= 4) weekLoad = "zeer hoog";
+      if (heavy === "ja" && days >= 2) weekLoad = "hoog";
+
+      weekTrend = "stabiel";
+      if (trend === "beter") weekTrend = "stijgend";
+      if (trend === "slechter") weekTrend = "dalend";
+      if (trend === "stabiel" && days >= 3) weekTrend = "stabiel maar kwetsbaar";
+
+      weekAction = "stabiel houden";
+      if (verdict === "OPBOUWEN") weekAction = "gecontroleerd verderbouwen";
+      if (verdict === "LICHT TRAINEN") weekAction = "niet verhogen";
+      if (verdict === "BEWUST LICHT") weekAction = "24u belasting verlagen";
+      if (verdict === "HERSTELDAG") weekAction = "herstel prioriteit geven";
+      if (verdict === "AFREMMEN") weekAction = "hard afremmen";
+      if (verdict === "STOP") weekAction = "stop";
 
       document.getElementById("result").innerHTML = `
         <div class="pill">Dagsturing</div>
+
         <div class="verdict ${verdictClass}">${verdict}</div>
 
         <div class="block">
           <div class="kicker">Belangrijkste reden</div>
-          <div class="text">${reden}</div>
+          <div class="text">${reason}</div>
         </div>
 
-        <div class="alert">${hardAlert || actie}</div>
+        <div class="alert">${alert}</div>
 
         <div class="block">
           <div class="kicker">Actie vandaag</div>
-          <div class="main">${actie}</div>
+          <div class="main">${action}</div>
         </div>
 
         <div class="block">
           <div class="kicker">Harde grens</div>
-          <div class="text">${grens}</div>
+          <div class="text">${limit}</div>
         </div>
 
         <div class="block">
@@ -628,7 +596,7 @@
 
         <div class="block">
           <div class="kicker">Impact op morgen</div>
-          <div class="text">${morgen}</div>
+          <div class="text">${tomorrow}</div>
         </div>
 
         <div class="stats">
@@ -642,22 +610,19 @@
           </div>
           <div class="stat">
             <small>Stappen</small>
-            <b>${stappen}</b>
+            <b>${steps}</b>
           </div>
           <div class="stat">
             <small>Dagtype</small>
-            <b>${dagtype}</b>
+            <b>${daytype}</b>
           </div>
         </div>
 
         <div class="block" style="margin-top:12px;">
           <div class="kicker">Weekstatus</div>
-          <div class="weekbox">
-            <div class="weekrow"><strong>Belasting:</strong> ${week.belasting}</div>
-            <div class="weekrow"><strong>Trend:</strong> ${week.hersteltrend}</div>
-            <div class="weekrow"><strong>Gedrag:</strong> ${week.gedrag}</div>
-            <div class="weekrow"><strong>Actie:</strong> ${week.actie}</div>
-          </div>
+          <div class="text"><strong>Belasting:</strong> ${weekLoad}</div>
+          <div class="text" style="margin-top:8px;"><strong>Trend:</strong> ${weekTrend}</div>
+          <div class="text" style="margin-top:8px;"><strong>Actie:</strong> ${weekAction}</div>
         </div>
       `;
     }
