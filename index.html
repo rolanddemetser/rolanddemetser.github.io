@@ -16,8 +16,8 @@
       --muted:#6b7280;
       --line:#e5e7eb;
       --chip:#ececec;
-      --chipOn:#111111;
-      --chipOnText:#ffffff;
+      --chip-on:#111111;
+      --chip-on-text:#ffffff;
       --good:#dff7e6;
       --warn:#fff1cc;
       --bad:#ffe0e0;
@@ -37,7 +37,7 @@
     }
 
     .wrap{
-      max-width:840px;
+      max-width:820px;
       margin:0 auto;
       padding:18px 16px 36px;
     }
@@ -47,7 +47,7 @@
       font-size:34px;
       line-height:1.05;
       font-weight:900;
-      letter-spacing:-0.6px;
+      letter-spacing:-0.5px;
     }
 
     .subtitle{
@@ -128,8 +128,8 @@
     }
 
     .chip.active{
-      background:var(--chipOn);
-      color:var(--chipOnText);
+      background:var(--chip-on);
+      color:var(--chip-on-text);
     }
 
     .btn{
@@ -180,10 +180,10 @@
 
     .band{
       border-radius:16px;
-      padding:13px 14px;
-      font-size:17px;
-      line-height:1.4;
-      font-weight:780;
+      padding:14px;
+      font-size:18px;
+      line-height:1.35;
+      font-weight:850;
       margin:10px 0 0;
     }
 
@@ -198,28 +198,23 @@
       padding:16px;
     }
 
-    .result-main h2{
-      margin:0 0 12px;
-      font-size:22px;
-      line-height:1.2;
+    .row{
+      margin:0 0 14px;
+      font-size:20px;
+      line-height:1.4;
     }
 
-    .row{
-      margin:0 0 12px;
-      font-size:19px;
-      line-height:1.45;
+    .row:last-child{
+      margin-bottom:0;
     }
 
     .label-strong{
-      font-weight:850;
-    }
-
-    .small{
-      color:var(--muted);
+      display:block;
       font-size:15px;
-      line-height:1.4;
-      margin-top:8px;
-      font-weight:650;
+      letter-spacing:0.4px;
+      font-weight:900;
+      color:var(--muted);
+      margin-bottom:4px;
     }
 
     .empty{
@@ -232,7 +227,7 @@
 <body>
   <div class="wrap">
     <h1>🔥 Weekcoach V7</h1>
-    <div class="subtitle">Ochtend eerst. Jij geeft de speelruimte, de coach beslist.</div>
+    <div class="subtitle">Ochtend eerst. Jij vult in, de coach beslist.</div>
 
     <div class="card">
       <div class="section-title">Garmin</div>
@@ -354,14 +349,12 @@
       const nums = available.map(Number).sort((a,b) => a-b);
       if(nums.length === 0) return 20;
 
-      // Darmen slecht = duur kort houden
       if(darmen === "slecht"){
         if(nums.includes(20)) return 20;
         if(nums.includes(30)) return 30;
         return nums[0];
       }
 
-      // Avond altijd voorzichtiger
       if(moment === "avond"){
         if(readiness < 75){
           if(nums.includes(20)) return 20;
@@ -374,7 +367,6 @@
         return nums[0];
       }
 
-      // Ochtend heeft voorrang
       if(moment === "ochtend"){
         if(readiness < 50){
           if(nums.includes(20)) return 20;
@@ -398,7 +390,6 @@
         return nums[0];
       }
 
-      // Middag
       if(readiness < 50){
         if(nums.includes(20)) return 20;
         return nums[0];
@@ -444,7 +435,6 @@
         ((100 - stress) * 0.20)
       );
 
-      // Check-in correcties
       if(gevoel === "goed") readiness += 5;
       if(gevoel === "slecht") readiness -= 10;
 
@@ -457,8 +447,8 @@
 
       readiness = clamp(readiness, 0, 100);
 
-      const gekozenMoment = chooseMoment(moments);
-      const gekozenDuur = chooseDuration(durations, readiness, gekozenMoment, darmen);
+      const moment = chooseMoment(moments);
+      const duur = chooseDuration(durations, readiness, moment, darmen);
 
       let dagtype = "";
       let doen = "";
@@ -468,29 +458,29 @@
 
       if(readiness < 50){
         dagtype = "🔴 Stop";
-        doen = `${gekozenDuur} min zeer rustig wandelen (${gekozenMoment}) of volledige rust`;
-        nietDoen = "GEEN training. Geen kracht, geen interval, geen versnellingen.";
+        doen = `${duur} min rustig wandelen (${moment}) of volledige rust`;
+        nietDoen = "geen training";
         stapdoel = "5000–6500";
-        verdict = "Vandaag herstel. Niet pushen.";
+        verdict = "Herstel. Niet trainen.";
       }
       else if(readiness < 62){
         dagtype = "🟠 Herstel";
-        doen = `${gekozenDuur} min rustige wandeling of rustige yoga (${gekozenMoment})`;
-        nietDoen = "GEEN intensiteit. Niet versnellen omdat het toch meevalt.";
+        doen = `${duur} min rustig bewegen (${moment})`;
+        nietDoen = "geen intensiteit";
         stapdoel = "6500–8000";
         verdict = "Bewegen ok. Training niet.";
       }
       else if(readiness < 74){
         dagtype = "🟢 Licht actief";
-        doen = `${gekozenDuur} min zone 2 training (${gekozenMoment})`;
-        nietDoen = "NIET tot uitputting. Geen heroïsche sessie.";
+        doen = `${duur} min zone 2 (${moment})`;
+        nietDoen = "niet tot uitputting";
         stapdoel = "7500–9000";
-        verdict = "Gecontroleerd trainen.";
+        verdict = "Train, maar gecontroleerd.";
       }
       else{
         dagtype = "🔵 Train";
-        doen = `${gekozenDuur} min training (${gekozenMoment})`;
-        nietDoen = "NIET overdrijven. Je hoeft jezelf niet leeg te trekken.";
+        doen = `${duur} min training (${moment})`;
+        nietDoen = "niet overdrijven";
         stapdoel = "9000–11000";
         verdict = "Groen licht.";
       }
@@ -498,15 +488,15 @@
       if(stress > 40){
         verdict += " Stress remt je.";
       } else if(stress <= 20 && readiness >= 62 && dagtype !== "🔵 Train"){
-        verdict += " Stress is laag, dus bewegen is zinvol.";
+        verdict += " Stress is laag.";
       }
 
       if(hrv < 40){
-        verdict += " HRV te laag, dus voorzichtig.";
+        verdict += " HRV te laag.";
       }
 
       if(sleep < 60){
-        verdict += " Slaap remt je af.";
+        verdict += " Slaap remt af.";
       }
 
       if(lichaam === "stijf"){
@@ -515,11 +505,10 @@
 
       if(darmen === "traag"){
         doen += " met vlotte cadans";
-        verdict += " Wandelen helpt vandaag waarschijnlijk meer dan kracht.";
       }
 
       if(darmen === "slecht"){
-        verdict += " Hou het extra simpel voor je systeem.";
+        verdict += " Hou het simpel.";
       }
 
       const band = scoreBand(readiness);
@@ -536,23 +525,27 @@
           </div>
           <div class="metric">
             <div class="metric-k">Moment</div>
-            <div class="metric-v" style="font-size:20px;line-height:1.15;">${gekozenMoment}</div>
+            <div class="metric-v" style="font-size:20px;line-height:1.15;">${moment}</div>
           </div>
           <div class="metric">
-            <div class="metric-k">Stapdoel</div>
+            <div class="metric-k">Stappen</div>
             <div class="metric-v" style="font-size:20px;line-height:1.15;">${stapdoel}</div>
           </div>
         </div>
 
         <div class="band ${band}">
-          <strong>Verdict:</strong> ${verdict}
+          ${verdict}
         </div>
 
         <div class="result-main">
-          <h2>Vandaag</h2>
-          <div class="row"><span class="label-strong">DOEN:</span> ${doen}</div>
-          <div class="row"><span class="label-strong">NIET DOEN:</span> ${nietDoen}</div>
-          <div class="small">Ochtend heeft altijd voorrang als die mogelijk is.</div>
+          <div class="row">
+            <span class="label-strong">DOEN</span>
+            ${doen}
+          </div>
+          <div class="row">
+            <span class="label-strong">NIET DOEN</span>
+            ${nietDoen}
+          </div>
         </div>
       `;
     }
